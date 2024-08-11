@@ -26,6 +26,9 @@ class Converters {
 
     @TypeConverter
     fun fromDayList(value: String): List<DAY> {
+        if (value.isEmpty()) {
+            return emptyList()
+        }
         return value.split(",").map { DAY.valueOf(it) }
     }
 

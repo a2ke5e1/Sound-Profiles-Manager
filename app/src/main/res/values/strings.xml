@@ -1,4 +1,12 @@
 <resources>
     <string name="app_name">Sound Profiles</string>
     <string name="save_sound_profile">Save Sound Profile</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="notification_volume">Notification Volume</string>
+    <string name="media_volume">Media Volume</string>
+    <string name="ringer_volume">Ringer Volume</string>
+    <string name="call_volume">Call Volume</string>
+    <string name="alarm_volume">Alarm Volume</string>
+    <string name="create_update_sound_profile">Create/Update Sound Profile</string>
 </resources>

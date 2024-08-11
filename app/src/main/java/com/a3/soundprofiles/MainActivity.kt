@@ -1,10 +1,15 @@
 package com.a3.soundprofiles
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -27,6 +32,14 @@ class MainActivity : AppCompatActivity() {
   private val binding
     get() = _binding
 
+  private var soundProfileManagerLauncher: ActivityResultLauncher<Intent> =
+      registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        Log.d("MainActivity", "Result code: ${result.resultCode}")
+        if (result.resultCode == Activity.RESULT_OK) {
+          mainViewModel.loadAllSoundProfiles()
+        }
+      }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     _binding = ActivityMainBinding.inflate(layoutInflater)
@@ -46,20 +59,14 @@ class MainActivity : AppCompatActivity() {
 
         is MainState.Success -> {
           val soundProfileRecyclerAdapter =
-              SoundProfileRecyclerAdapter(state.soundProfiles.toMutableList())
+              SoundProfileRecyclerAdapter(
+                  state.soundProfiles.toMutableList(), soundProfileManagerLauncher)
           val linearLayoutManager = LinearLayoutManager(this)
 
           binding.recyclerView.apply {
             adapter = soundProfileRecyclerAdapter
             layoutManager = linearLayoutManager
             addItemDecoration(SpaceBetweenItemDecorator(4))
-          }
-
-          binding.fab.setOnClickListener {
-            val currentVolume = getCurrentVolume(this)
-            mainViewModel.saveCurrentSoundProfile(currentVolume)
-            soundProfileRecyclerAdapter.addSoundProfile(currentVolume)
-            linearLayoutManager.scrollToPosition(soundProfileRecyclerAdapter.itemCount - 1)
           }
         }
 
@@ -68,6 +75,10 @@ class MainActivity : AppCompatActivity() {
           Toast.makeText(this, state.message, Toast.LENGTH_SHORT).show()
         }
       }
+    }
+    binding.fab.setOnClickListener {
+      val intent = SoundProfileManager.createIntent(this)
+      soundProfileManagerLauncher.launch(intent)
     }
   }
 }

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SoundProfileManager">
+
+    <androidx.constraintlayout.helper.widget.Flow
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        app:constraint_referenced_ids="title_container, description_container, media_slider_container, notification_slider_container, ringer_slider_container, call_slider_container, alarm_slider_container"
+        app:flow_maxElementsWrap="1"
+        app:flow_verticalGap="8dp"
+        app:flow_verticalStyle="packed"
+        app:flow_wrapMode="aligned"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/title_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/title" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/description_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        tools:ignore="MissingConstraints">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/description" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:id="@+id/media_slider_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/media_volume" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/media_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="0.5" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/notification_slider_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/notification_volume" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/notification_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="0.5" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/ringer_slider_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ringer_volume" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/ringer_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="0.5" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/call_slider_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/call_volume" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/call_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="0.5" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/alarm_slider_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        tools:ignore="MissingConstraints">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/alarm_volume" />
+
+        <com.google.android.material.slider.Slider
+            android:id="@+id/alarm_volume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:value="0.5" />
+
+    </LinearLayout>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/save_sound_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/create_update_sound_profile"
+        android:layout_margin="16dp"
+        android:src="@drawable/baseline_save_24"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
