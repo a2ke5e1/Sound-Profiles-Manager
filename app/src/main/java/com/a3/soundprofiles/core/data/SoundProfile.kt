@@ -8,6 +8,16 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.util.Date
 
+enum class DAY {
+  SUNDAY,
+  MONDAY,
+  TUESDAY,
+  WEDNESDAY,
+  THURSDAY,
+  FRIDAY,
+  SATURDAY
+}
+
 @Entity(tableName = "sound_profiles")
 data class SoundProfile(
     @PrimaryKey(autoGenerate = true) val id: Int,
@@ -21,7 +31,10 @@ data class SoundProfile(
     @ColumnInfo(name = "call_volume") @FloatRange(from = 0.0, to = 1.0) val callVolume: Float,
     @ColumnInfo(name = "alarm_volume") @FloatRange(from = 0.0, to = 1.0) val alarmVolume: Float,
     @ColumnInfo(name = "start_time") val startTime: Date,
-    @ColumnInfo(name = "end_time") val endTime: Date
+    @ColumnInfo(name = "end_time") val endTime: Date,
+    @ColumnInfo(name = "is_active") val isActive: Boolean,
+    @ColumnInfo(name = "repeat_everyday") val repeatEveryday: Boolean,
+    @ColumnInfo(name = "repeat_days") val repeatDays: List<DAY>
 ) {
   fun applyProfile(context: Context) {
     val volumeSettings = this

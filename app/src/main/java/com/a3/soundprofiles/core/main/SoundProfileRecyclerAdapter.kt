@@ -1,19 +1,21 @@
 package com.a3.soundprofiles.core.main
 
+import android.graphics.Rect
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.a3.soundprofiles.core.data.SoundProfile
-import com.a3.soundprofiles.databinding.CardSoundProfileBinding
+import com.a3.soundprofiles.databinding.CardSoundProfileItemBinding
 
-class SoundProfileRecyclerAdapter(private val dataSet: List<SoundProfile>) :
+class SoundProfileRecyclerAdapter(private val soundProfiles: MutableList<SoundProfile>) :
     RecyclerView.Adapter<CardSoundProfileItemHolder>() {
 
   // Create new views (invoked by the layout manager)
   override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): CardSoundProfileItemHolder {
     // Create a new view, which defines the UI of the list item
     val inflater = LayoutInflater.from(viewGroup.context)
-    val binding = CardSoundProfileBinding.inflate(inflater, viewGroup, false)
+    val binding = CardSoundProfileItemBinding.inflate(inflater, viewGroup, false)
     return CardSoundProfileItemHolder(binding)
   }
 
@@ -21,20 +23,52 @@ class SoundProfileRecyclerAdapter(private val dataSet: List<SoundProfile>) :
   override fun onBindViewHolder(viewHolder: CardSoundProfileItemHolder, position: Int) {
     // Get element from your dataset at this position and replace the
     // contents of the view with that element
-    viewHolder.bind(dataSet[position])
+    viewHolder.bind(soundProfiles[position])
   }
 
   // Return the size of your dataset (invoked by the layout manager)
-  override fun getItemCount() = dataSet.size
+  override fun getItemCount() = soundProfiles.size
+
+  fun addSoundProfile(soundProfile: SoundProfile) {
+    soundProfiles.add(soundProfile)
+    notifyItemInserted(soundProfiles.size - 1)
+  }
+
+  // Optionally, a method to update the entire list
+  fun updateSoundProfiles(newSoundProfiles: List<SoundProfile>) {
+    soundProfiles.clear()
+    soundProfiles.addAll(newSoundProfiles)
+    notifyDataSetChanged()
+  }
 }
 
-class CardSoundProfileItemHolder(val binding: CardSoundProfileBinding) :
+class CardSoundProfileItemHolder(val binding: CardSoundProfileItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
 
   fun bind(soundProfile: SoundProfile) {
-    binding.soundProfileName.text = soundProfile.title
-    binding.root.setOnClickListener {
-      soundProfile.applyProfile(binding.root.context)
+    binding.title.text = soundProfile.title
+    binding.description.text = soundProfile.description
+    binding.root.setOnClickListener { soundProfile.applyProfile(binding.root.context) }
+  }
+}
+
+class SpaceBetweenItemDecorator(private val spaceHeight: Int) :
+    RecyclerView.ItemDecoration() {
+  override fun getItemOffsets(
+      outRect: Rect,
+      view: View,
+      parent: RecyclerView,
+      state: RecyclerView.State
+  ) {
+    with(outRect) {
+      if (parent.getChildAdapterPosition(view) == 0) {
+        bottom = spaceHeight
+      } else if (parent.getChildAdapterPosition(view) == parent.adapter?.let { it.itemCount - 1 }) {
+        top = spaceHeight
+      } else {
+        top = spaceHeight
+        bottom = spaceHeight
+      }
     }
   }
 }

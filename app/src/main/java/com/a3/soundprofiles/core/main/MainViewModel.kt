@@ -25,6 +25,10 @@ class MainViewModel @Inject constructor(val soundProfileDao: SoundProfileDao) : 
   val state
     get() = _state
 
+  fun saveCurrentSoundProfile(soundProfile: SoundProfile) {
+    viewModelScope.launch(Dispatchers.IO) { soundProfileDao.insert(soundProfile) }
+  }
+
   fun loadAllSoundProfiles() {
     viewModelScope.launch(Dispatchers.IO) {
       try {

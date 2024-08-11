@@ -14,6 +14,7 @@ import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.core.main.MainState
 import com.a3.soundprofiles.core.main.MainViewModel
 import com.a3.soundprofiles.core.main.SoundProfileRecyclerAdapter
+import com.a3.soundprofiles.core.main.SpaceBetweenItemDecorator
 import com.a3.soundprofiles.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
@@ -44,10 +45,21 @@ class MainActivity : AppCompatActivity() {
         is MainState.Loading -> {}
 
         is MainState.Success -> {
-          val soundProfileRecyclerAdapter = SoundProfileRecyclerAdapter(state.soundProfiles)
+          val soundProfileRecyclerAdapter =
+              SoundProfileRecyclerAdapter(state.soundProfiles.toMutableList())
+          val linearLayoutManager = LinearLayoutManager(this)
+
           binding.recyclerView.apply {
             adapter = soundProfileRecyclerAdapter
-            layoutManager = LinearLayoutManager(this@MainActivity)
+            layoutManager = linearLayoutManager
+            addItemDecoration(SpaceBetweenItemDecorator(4))
+          }
+
+          binding.fab.setOnClickListener {
+            val currentVolume = getCurrentVolume(this)
+            mainViewModel.saveCurrentSoundProfile(currentVolume)
+            soundProfileRecyclerAdapter.addSoundProfile(currentVolume)
+            linearLayoutManager.scrollToPosition(soundProfileRecyclerAdapter.itemCount - 1)
           }
         }
 
@@ -92,7 +104,7 @@ fun getCurrentVolume(context: Context): SoundProfile {
 
   return SoundProfile(
       id = 0,
-      title = "Current Profile",
+      title = "Current Profile ${Date()}",
       description = "Current volume settings",
       mediaVolume = currentMediaVolume,
       notificationVolume = currentNotificationVolume,
@@ -100,5 +112,8 @@ fun getCurrentVolume(context: Context): SoundProfile {
       callVolume = currentCallVolume,
       alarmVolume = currentAlarmVolume,
       startTime = Date(),
-      endTime = Date())
+      endTime = Date(),
+      isActive = false,
+      repeatEveryday = false,
+      repeatDays = emptyList())
 }

@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Sound Profiles</string>
+    <string name="save_sound_profile">Save Sound Profile</string>
 </resources>
