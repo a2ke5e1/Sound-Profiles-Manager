@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
-        app:constraint_referenced_ids="title_container, description_container, media_slider_container, notification_slider_container, ringer_slider_container, call_slider_container, alarm_slider_container"
+        app:constraint_referenced_ids="title_container, description_container,
+        start_datetime_container, end_datetime_container,
+        repeat_day_container, media_slider_container, notification_slider_container, ringer_slider_container, call_slider_container, alarm_slider_container"
         app:flow_maxElementsWrap="1"
         app:flow_verticalGap="8dp"
         app:flow_verticalStyle="packed"
@@ -41,7 +43,9 @@
             android:id="@+id/description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/description" />
+            android:gravity="top"
+            android:hint="@string/description"
+            android:minLines="4" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <LinearLayout
@@ -55,7 +59,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/media_volume" />
+            android:text="@string/media_volume"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/media_volume"
@@ -77,7 +82,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/notification_volume" />
+            android:text="@string/notification_volume"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/notification_volume"
@@ -99,7 +105,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/ringer_volume" />
+            android:text="@string/ringer_volume"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/ringer_volume"
@@ -120,7 +127,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/call_volume" />
+            android:text="@string/call_volume"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/call_volume"
@@ -141,7 +149,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/alarm_volume" />
+            android:text="@string/alarm_volume"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/alarm_volume"
@@ -152,12 +161,93 @@
     </LinearLayout>
 
 
+    <LinearLayout
+        android:id="@+id/repeat_day_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentStart="true"
+                android:gravity="center_vertical"
+                android:text="@string/every_day"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/every_day"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentEnd="true"
+                android:gravity="center_vertical" />
+
+        </RelativeLayout>
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/select_day_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/start_datetime_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/from"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+        <TextView
+            android:id="@+id/start_datetime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+            tools:text="@tools:sample/date/ddmmyy" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/end_datetime_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/to"
+            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+        <TextView
+            android:id="@+id/end_datetime"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+            tools:text="@tools:sample/date/ddmmyy" />
+
+    </LinearLayout>
+
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/save_sound_profile"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:contentDescription="@string/create_update_sound_profile"
         android:layout_margin="16dp"
+        android:contentDescription="@string/create_update_sound_profile"
         android:src="@drawable/baseline_save_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

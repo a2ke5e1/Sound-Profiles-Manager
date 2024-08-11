@@ -4,12 +4,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.a3.soundprofiles.core.dao.SoundProfileDao
+import com.a3.soundprofiles.core.data.DAY
 import com.a3.soundprofiles.core.data.SoundProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.util.Date
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
+import javax.inject.Inject
 
 @HiltViewModel
 class CreateEditSoundProfileViewModel
@@ -94,5 +95,21 @@ constructor(private val soundProfileDao: SoundProfileDao) : ViewModel() {
 
   fun setDescription(description: String) {
     _soundProfile.value = _soundProfile.value?.copy(description = description)
+  }
+
+  fun setRepeatEveryday(bool: Boolean) {
+    _soundProfile.value = _soundProfile.value?.copy(repeatEveryday = bool)
+  }
+
+  fun setRepeatDays(repeatDays: List<DAY>) {
+    _soundProfile.value = _soundProfile.value?.copy(repeatDays = repeatDays)
+  }
+
+  fun setStartTime(date: Date) {
+    _soundProfile.value = _soundProfile.value?.copy(startTime = date)
+  }
+
+  fun setEndTime(date: Date) {
+    _soundProfile.value = _soundProfile.value?.copy(endTime = date)
   }
 }

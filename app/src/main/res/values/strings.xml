@@ -9,4 +9,7 @@
     <string name="call_volume">Call Volume</string>
     <string name="alarm_volume">Alarm Volume</string>
     <string name="create_update_sound_profile">Create/Update Sound Profile</string>
+    <string name="every_day">Every Day</string>
+    <string name="to">To</string>
+    <string name="from">From</string>
 </resources>
