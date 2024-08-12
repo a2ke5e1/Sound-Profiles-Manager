@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
@@ -54,8 +55,11 @@ class SoundProfileManager : AppCompatActivity() {
       insets
     }
     setSupportActionBar(binding.toolbar)
+    supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    binding.toolbar.title = getString(R.string.create_sound_profile)
 
     if (soundProfileId > 0) {
+      binding.toolbar.title = getString(R.string.edit_sound_profile)
       createEditSoundProfileViewModel.loadSoundProfile(soundProfileId)
     }
 
@@ -249,6 +253,16 @@ class SoundProfileManager : AppCompatActivity() {
       timePicker.show(supportFragmentManager, "timePicker")
     } else {
       datePicker.show(supportFragmentManager, "datePicker")
+    }
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        finish()
+        true
+      }
+      else -> super.onOptionsItemSelected(item)
     }
   }
 

@@ -14,4 +14,6 @@
     <string name="from">From</string>
     <string name="schedule">Schedule</string>
     <string name="apply_now">Apply Now</string>
+    <string name="create_sound_profile">Create Sound Profile</string>
+    <string name="edit_sound_profile">Edit Sound Profile</string>
 </resources>

@@ -45,11 +45,17 @@ class MainActivity : AppCompatActivity() {
     _binding = ActivityMainBinding.inflate(layoutInflater)
     enableEdgeToEdge()
     setContentView(binding.root)
-    ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+    ViewCompat.setOnApplyWindowInsetsListener(binding.appBarLayout) { v, insets ->
       val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-      v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+      v.setPadding(0, systemBars.top, 0, 0)
       insets
     }
+    ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+      v.setPadding(0, 0, 0, systemBars.bottom)
+      insets
+    }
+    setSupportActionBar(binding.toolbar)
 
     mainViewModel.loadAllSoundProfiles()
 
