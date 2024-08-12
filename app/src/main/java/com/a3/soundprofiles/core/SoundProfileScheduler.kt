@@ -60,6 +60,9 @@ class SoundProfileScheduler(private val context: Context) {
             endIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     alarmManager.cancel(endPendingIntent)
+
+    Toast.makeText(context, "'${soundProfile.title}' profile schedule canceled", Toast.LENGTH_SHORT)
+        .show()
   }
 
   companion object {

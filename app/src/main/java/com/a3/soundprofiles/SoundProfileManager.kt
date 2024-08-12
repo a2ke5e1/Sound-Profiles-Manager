@@ -97,9 +97,7 @@ class SoundProfileManager : AppCompatActivity() {
       binding.selectDayContainer.removeAllViews()
       DAY.entries.forEach { day ->
         val chip: Chip = Chip(this)
-        val drawable =
-            ChipDrawable.createFromAttributes(
-                this, null, 0, R.style.Widget_Chip)
+        val drawable = ChipDrawable.createFromAttributes(this, null, 0, R.style.Widget_Chip)
         chip.setChipDrawable(drawable)
         chip.text =
             day.name.toString().substring(0, 2).lowercase().replaceFirstChar { it.uppercase() }
@@ -213,6 +211,8 @@ class SoundProfileManager : AppCompatActivity() {
     calendar.time = this
     calendar.set(Calendar.HOUR_OF_DAY, hour)
     calendar.set(Calendar.MINUTE, minute)
+    calendar.set(Calendar.SECOND, 0)
+    calendar.set(Calendar.MILLISECOND, 0)
     return calendar.time
   }
 
