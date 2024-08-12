@@ -6,11 +6,11 @@ import android.content.Intent
 import com.a3.soundprofiles.core.dao.SoundProfileDao
 import com.a3.soundprofiles.core.data.SoundProfile
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.Date
+import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.Date
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class SoundProfileApplyBroadcastReceiver : BroadcastReceiver() {
@@ -18,6 +18,7 @@ class SoundProfileApplyBroadcastReceiver : BroadcastReceiver() {
   @Inject lateinit var soundProfileDao: SoundProfileDao
 
   override fun onReceive(context: Context, intent: Intent) {
+    val soundProfileScheduler = SoundProfileScheduler(context)
     val soundProfileId = intent.getIntExtra(SoundProfileScheduler.SOUND_PROFILE_ID, -1)
     val resetToDefault = intent.getBooleanExtra(SoundProfileScheduler.RESET_TO_DEFAULT, false)
     if (soundProfileId != -1) {
@@ -41,6 +42,7 @@ class SoundProfileApplyBroadcastReceiver : BroadcastReceiver() {
                   notificationVolume = 1f,
               )
               .applyProfile(context)
+          soundProfileScheduler.rescheduleSoundProfile(context, soundProfileId, soundProfileDao)
           return@launch
         }
 
@@ -50,4 +52,3 @@ class SoundProfileApplyBroadcastReceiver : BroadcastReceiver() {
     }
   }
 }
-
