@@ -16,4 +16,5 @@
     <string name="apply_now">Apply Now</string>
     <string name="create_sound_profile">Create Sound Profile</string>
     <string name="edit_sound_profile">Edit Sound Profile</string>
+    <string name="cancel_schedule">Cancel Schedule</string>
 </resources>

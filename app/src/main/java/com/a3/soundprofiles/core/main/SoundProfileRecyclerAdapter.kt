@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
+import com.a3.soundprofiles.R
 import com.a3.soundprofiles.SoundProfileManager
 import com.a3.soundprofiles.core.SoundProfileScheduler
 import com.a3.soundprofiles.core.data.SoundProfile
@@ -14,7 +15,8 @@ import com.a3.soundprofiles.databinding.CardSoundProfileItemBinding
 
 class SoundProfileRecyclerAdapter(
     private val soundProfiles: MutableList<SoundProfile>,
-    private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>
+    private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>,
+    private val toggleIsActive: (soundProfile: SoundProfile) -> Unit
 ) : RecyclerView.Adapter<CardSoundProfileItemHolder>() {
 
   // Create new views (invoked by the layout manager)
@@ -29,7 +31,10 @@ class SoundProfileRecyclerAdapter(
   override fun onBindViewHolder(viewHolder: CardSoundProfileItemHolder, position: Int) {
     // Get element from your dataset at this position and replace the
     // contents of the view with that element
-    viewHolder.bind(soundProfiles[position])
+    viewHolder.bind(soundProfiles[position]) {
+      toggleIsActive(it)
+      notifyItemChanged(position)
+    }
   }
 
   // Return the size of your dataset (invoked by the layout manager)
@@ -50,10 +55,10 @@ class SoundProfileRecyclerAdapter(
 
 class CardSoundProfileItemHolder(
     val binding: CardSoundProfileItemBinding,
-    private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>
+    private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>,
 ) : RecyclerView.ViewHolder(binding.root) {
 
-  fun bind(soundProfile: SoundProfile) {
+  fun bind(soundProfile: SoundProfile, toggleIsActive: (soundProfile: SoundProfile) -> Unit) {
     val context = binding.root.context
     binding.title.text = soundProfile.title
     binding.description.text = soundProfile.description
@@ -63,9 +68,22 @@ class CardSoundProfileItemHolder(
     }
 
     binding.applyNowBtn.setOnClickListener { soundProfile.applyProfile(context) }
+    val soundProfileScheduler = SoundProfileScheduler(context)
+    if (soundProfile.isActive) {
+      binding.scheduleBtn.text = context.getString(R.string.cancel_schedule)
+    } else {
+      binding.scheduleBtn.text = context.getString(R.string.schedule)
+    }
+
     binding.scheduleBtn.setOnClickListener {
-      val soundProfileScheduler = SoundProfileScheduler(context)
-      soundProfileScheduler.scheduleSoundProfileApply(soundProfile)
+      if (soundProfile.isActive) {
+        binding.scheduleBtn.text = context.getString(R.string.schedule)
+        soundProfileScheduler.cancelScheduledSoundProfileApply(soundProfile)
+      } else {
+        binding.scheduleBtn.text = context.getString(R.string.cancel_schedule)
+        soundProfileScheduler.scheduleSoundProfileApply(soundProfile)
+      }
+      toggleIsActive(soundProfile)
     }
   }
 }

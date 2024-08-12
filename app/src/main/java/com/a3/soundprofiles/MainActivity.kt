@@ -66,13 +66,13 @@ class MainActivity : AppCompatActivity() {
         is MainState.Success -> {
           val soundProfileRecyclerAdapter =
               SoundProfileRecyclerAdapter(
-                  state.soundProfiles.toMutableList(), soundProfileManagerLauncher)
+                  state.soundProfiles.toMutableList(),
+                  soundProfileManagerLauncher,
+                  mainViewModel::toggleIsActive)
           val linearLayoutManager = LinearLayoutManager(this)
-
           binding.recyclerView.apply {
             adapter = soundProfileRecyclerAdapter
             layoutManager = linearLayoutManager
-            addItemDecoration(SpaceBetweenItemDecorator(4))
           }
         }
 
@@ -82,6 +82,10 @@ class MainActivity : AppCompatActivity() {
         }
       }
     }
+
+    // Add ItemDecoration to the RecyclerView
+    // only once to prevent extra space on every update.
+    binding.recyclerView.addItemDecoration(SpaceBetweenItemDecorator(4))
     binding.fab.setOnClickListener {
       val intent = SoundProfileManager.createIntent(this)
       soundProfileManagerLauncher.launch(intent)

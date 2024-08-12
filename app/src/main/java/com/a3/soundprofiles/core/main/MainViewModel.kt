@@ -6,9 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.a3.soundprofiles.core.dao.SoundProfileDao
 import com.a3.soundprofiles.core.data.SoundProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed class MainState {
   object Loading : MainState()
@@ -37,6 +37,13 @@ class MainViewModel @Inject constructor(val soundProfileDao: SoundProfileDao) : 
       } catch (e: Exception) {
         _state.postValue(MainState.Error(e.message ?: "An error occurred"))
       }
+    }
+  }
+
+  fun toggleIsActive(soundProfile: SoundProfile) {
+    viewModelScope.launch(Dispatchers.IO) {
+      soundProfileDao.update(soundProfile.copy(isActive = !soundProfile.isActive))
+        loadAllSoundProfiles()
     }
   }
 }
