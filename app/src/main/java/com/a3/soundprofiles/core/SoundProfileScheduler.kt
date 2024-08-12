@@ -7,13 +7,13 @@ import android.content.Intent
 import android.widget.Toast
 import com.a3.soundprofiles.core.dao.SoundProfileDao
 import com.a3.soundprofiles.core.data.SoundProfile
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import java.util.Date
 import kotlin.apply
 import kotlin.jvm.java
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 
 class SoundProfileScheduler(private val context: Context) {
   private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -71,7 +71,7 @@ class SoundProfileScheduler(private val context: Context) {
         .show()
   }
 
-   fun rescheduleSoundProfile(
+  fun rescheduleSoundProfile(
       context: Context,
       soundProfileId: Int,
       soundProfileDao: SoundProfileDao

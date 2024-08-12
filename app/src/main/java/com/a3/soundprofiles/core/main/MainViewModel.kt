@@ -43,7 +43,8 @@ class MainViewModel @Inject constructor(val soundProfileDao: SoundProfileDao) : 
   fun toggleIsActive(soundProfile: SoundProfile) {
     viewModelScope.launch(Dispatchers.IO) {
       soundProfileDao.update(soundProfile.copy(isActive = !soundProfile.isActive))
-        loadAllSoundProfiles()
+      val updatedSoundProfiles = soundProfileDao.getAll()
+      _state.postValue(MainState.Success(updatedSoundProfiles))
     }
   }
 }

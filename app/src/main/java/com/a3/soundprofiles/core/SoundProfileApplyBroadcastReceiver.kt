@@ -6,11 +6,11 @@ import android.content.Intent
 import com.a3.soundprofiles.core.dao.SoundProfileDao
 import com.a3.soundprofiles.core.data.SoundProfile
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Date
-import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.Date
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class SoundProfileApplyBroadcastReceiver : BroadcastReceiver() {

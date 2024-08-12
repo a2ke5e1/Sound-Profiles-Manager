@@ -13,8 +13,7 @@ interface SoundProfileDao {
 
   @Query("SELECT * FROM sound_profiles WHERE id = :id") suspend fun getById(id: Int): SoundProfile
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  suspend fun insert(soundProfile: SoundProfile)
+  @Insert(onConflict = OnConflictStrategy.REPLACE) suspend fun insert(soundProfile: SoundProfile)
 
   @Query("DELETE FROM sound_profiles WHERE id = :id") suspend fun deleteById(id: Int)
 

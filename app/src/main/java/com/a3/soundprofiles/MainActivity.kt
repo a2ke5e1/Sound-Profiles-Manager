@@ -14,10 +14,15 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.recyclerview.selection.SelectionPredicates
+import androidx.recyclerview.selection.SelectionTracker
+import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.core.main.MainState
 import com.a3.soundprofiles.core.main.MainViewModel
+import com.a3.soundprofiles.core.main.SoundProfileItemDetailsLookup
+import com.a3.soundprofiles.core.main.SoundProfileItemKeyProvider
 import com.a3.soundprofiles.core.main.SoundProfileRecyclerAdapter
 import com.a3.soundprofiles.core.main.SpaceBetweenItemDecorator
 import com.a3.soundprofiles.databinding.ActivityMainBinding
@@ -28,6 +33,7 @@ import java.util.Date
 class MainActivity : AppCompatActivity() {
 
   val mainViewModel: MainViewModel by viewModels()
+  private lateinit var tracker: SelectionTracker<Long>
   private lateinit var _binding: ActivityMainBinding
   private val binding
     get() = _binding
@@ -59,21 +65,51 @@ class MainActivity : AppCompatActivity() {
 
     mainViewModel.loadAllSoundProfiles()
 
+    val soundProfileRecyclerAdapter =
+        SoundProfileRecyclerAdapter(
+            emptyList<SoundProfile>().toMutableList(),
+            soundProfileManagerLauncher,
+            mainViewModel::toggleIsActive)
+    val linearLayoutManager = LinearLayoutManager(this)
+    binding.recyclerView.apply {
+      adapter = soundProfileRecyclerAdapter
+      layoutManager = linearLayoutManager
+    }
+
     mainViewModel.state.observe(this) { state ->
       when (state) {
         is MainState.Loading -> {}
 
         is MainState.Success -> {
+
           val soundProfileRecyclerAdapter =
-              SoundProfileRecyclerAdapter(
-                  state.soundProfiles.toMutableList(),
-                  soundProfileManagerLauncher,
-                  mainViewModel::toggleIsActive)
-          val linearLayoutManager = LinearLayoutManager(this)
-          binding.recyclerView.apply {
-            adapter = soundProfileRecyclerAdapter
-            layoutManager = linearLayoutManager
-          }
+              binding.recyclerView.adapter as SoundProfileRecyclerAdapter
+          soundProfileRecyclerAdapter.updateSoundProfiles(state.soundProfiles)
+
+          tracker =
+              SelectionTracker.Builder(
+                      "soundProfileSelection",
+                      binding.recyclerView,
+                      SoundProfileItemKeyProvider(binding.recyclerView),
+                      SoundProfileItemDetailsLookup(binding.recyclerView),
+                      StorageStrategy.createLongStorage())
+                  .withSelectionPredicate(SelectionPredicates.createSelectAnything())
+                  .build()
+          soundProfileRecyclerAdapter.tracker = tracker
+
+          tracker.addObserver(
+              object : SelectionTracker.SelectionObserver<Long>() {
+                override fun onSelectionChanged() {
+                  super.onSelectionChanged()
+
+                  binding.toolbar.title =
+                      if (tracker.selection.size() > 0) {
+                        "${tracker.selection.size()} selected"
+                      } else {
+                        "Sound Profiles"
+                      }
+                }
+              })
         }
 
         is MainState.Error -> {

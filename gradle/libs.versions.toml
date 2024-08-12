@@ -14,6 +14,7 @@ ksp = "2.0.10-1.0.24"
 hilt = "2.52"
 lifecycleViewmodelKtx = "2.9.0-alpha01"
 lifecycleLivedataKtx = "2.9.0-alpha01"
+recyclerviewSelection = "1.2.0-alpha01"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -31,6 +32,7 @@ com-google-dagger-hilt-android = { group = "com.google.dagger", name = "hilt-and
 com-google-dagger-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 androidx-lifecycle-viewmodel-ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "lifecycleViewmodelKtx" }
 androidx-lifecycle-livedata-ktx = { group = "androidx.lifecycle", name = "lifecycle-livedata-ktx", version.ref = "lifecycleLivedataKtx" }
+androidx-recyclerview-selection = { group = "androidx.recyclerview", name = "recyclerview-selection", version.ref = "recyclerviewSelection" }
 
 
 [plugins]

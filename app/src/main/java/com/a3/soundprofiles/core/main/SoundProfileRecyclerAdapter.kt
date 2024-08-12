@@ -3,21 +3,30 @@ package com.a3.soundprofiles.core.main
 import android.content.Intent
 import android.graphics.Rect
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
+import androidx.recyclerview.selection.ItemDetailsLookup
+import androidx.recyclerview.selection.ItemKeyProvider
+import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.a3.soundprofiles.R
-import com.a3.soundprofiles.SoundProfileManager
 import com.a3.soundprofiles.core.SoundProfileScheduler
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.databinding.CardSoundProfileItemBinding
 
 class SoundProfileRecyclerAdapter(
-    private val soundProfiles: MutableList<SoundProfile>,
+    val soundProfiles: MutableList<SoundProfile>,
     private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>,
     private val toggleIsActive: (soundProfile: SoundProfile) -> Unit
 ) : RecyclerView.Adapter<CardSoundProfileItemHolder>() {
+
+  var tracker: SelectionTracker<Long>? = null
+
+  init {
+    setHasStableIds(true)
+  }
 
   // Create new views (invoked by the layout manager)
   override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): CardSoundProfileItemHolder {
@@ -31,10 +40,12 @@ class SoundProfileRecyclerAdapter(
   override fun onBindViewHolder(viewHolder: CardSoundProfileItemHolder, position: Int) {
     // Get element from your dataset at this position and replace the
     // contents of the view with that element
-    viewHolder.bind(soundProfiles[position]) {
+    val soundProfile = soundProfiles[position]
+    viewHolder.bind(soundProfile) {
       toggleIsActive(it)
       notifyItemChanged(position)
     }
+    tracker?.let { viewHolder.bindSelection(it.isSelected(soundProfile.id.toLong())) }
   }
 
   // Return the size of your dataset (invoked by the layout manager)
@@ -51,6 +62,8 @@ class SoundProfileRecyclerAdapter(
     soundProfiles.addAll(newSoundProfiles)
     notifyDataSetChanged()
   }
+
+  override fun getItemId(position: Int): Long = soundProfiles[position].id.toLong()
 }
 
 class CardSoundProfileItemHolder(
@@ -62,10 +75,6 @@ class CardSoundProfileItemHolder(
     val context = binding.root.context
     binding.title.text = soundProfile.title
     binding.description.text = soundProfile.description
-    binding.root.setOnClickListener {
-      val intent = SoundProfileManager.createIntent(context, soundProfile.id)
-      soundProfileManagerLauncher.launch(intent)
-    }
 
     binding.applyNowBtn.setOnClickListener { soundProfile.applyProfile(context) }
     val soundProfileScheduler = SoundProfileScheduler(context)
@@ -86,6 +95,18 @@ class CardSoundProfileItemHolder(
       toggleIsActive(soundProfile)
     }
   }
+
+  fun bindSelection(isSelected: Boolean) {
+    itemView.isActivated = isSelected
+    binding.selectionIndicator.visibility = if (isSelected) View.VISIBLE else View.GONE
+  }
+
+  fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
+      object : ItemDetailsLookup.ItemDetails<Long>() {
+        override fun getPosition(): Int = bindingAdapterPosition
+
+        override fun getSelectionKey(): Long = itemId
+      }
 }
 
 class SpaceBetweenItemDecorator(private val spaceHeight: Int) : RecyclerView.ItemDecoration() {
@@ -104,6 +125,31 @@ class SpaceBetweenItemDecorator(private val spaceHeight: Int) : RecyclerView.Ite
         top = spaceHeight
         bottom = spaceHeight
       }
+    }
+  }
+}
+
+class SoundProfileItemKeyProvider(private val recyclerView: RecyclerView) :
+    ItemKeyProvider<Long>(SCOPE_MAPPED) {
+
+  override fun getKey(position: Int): Long? {
+    return recyclerView.adapter?.getItemId(position)
+  }
+
+  override fun getPosition(key: Long): Int {
+    val viewHolder = recyclerView.findViewHolderForItemId(key)
+    return viewHolder?.layoutPosition ?: RecyclerView.NO_POSITION
+  }
+}
+
+class SoundProfileItemDetailsLookup(private val recyclerView: RecyclerView) :
+    ItemDetailsLookup<Long>() {
+  override fun getItemDetails(e: MotionEvent): ItemDetails<Long>? {
+    val view = recyclerView.findChildViewUnder(e.x, e.y)
+    return if (view != null) {
+      (recyclerView.getChildViewHolder(view) as CardSoundProfileItemHolder).getItemDetails()
+    } else {
+      null
     }
   }
 }
