@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import com.a3.soundprofiles.core.data.SoundProfile
 
@@ -28,4 +29,9 @@ interface SoundProfileDao {
   suspend fun findByDescription(description: String): SoundProfile
 
   @Update suspend fun update(soundProfile: SoundProfile)
+
+  @Transaction
+  suspend fun delete(profiles: List<SoundProfile>) {
+    profiles.forEach { deleteById(it.id) }
+  }
 }

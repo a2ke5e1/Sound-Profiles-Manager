@@ -6,6 +6,7 @@ import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
 import android.util.Log
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
@@ -78,8 +79,13 @@ class MainActivity : AppCompatActivity() {
 
     mainViewModel.state.observe(this) { state ->
       when (state) {
-        is MainState.Loading -> {}
-
+        is MainState.Loading -> {
+          Toast.makeText(this, "Loading sound profiles", Toast.LENGTH_SHORT).show()
+        }
+        is MainState.Empty -> {
+            soundProfileRecyclerAdapter.updateSoundProfiles(emptyList())
+          Toast.makeText(this, "No sound profiles found", Toast.LENGTH_SHORT).show()
+        }
         is MainState.Success -> {
 
           val soundProfileRecyclerAdapter =
@@ -88,7 +94,7 @@ class MainActivity : AppCompatActivity() {
 
           tracker =
               SelectionTracker.Builder(
-                      "soundProfileSelection",
+                  "soundProfileSelection",
                       binding.recyclerView,
                       SoundProfileItemKeyProvider(binding.recyclerView),
                       SoundProfileItemDetailsLookup(binding.recyclerView),
@@ -101,13 +107,51 @@ class MainActivity : AppCompatActivity() {
               object : SelectionTracker.SelectionObserver<Long>() {
                 override fun onSelectionChanged() {
                   super.onSelectionChanged()
+                  binding.toolbar.apply {
+                    menu.clear()
+                    supportActionBar?.setDisplayHomeAsUpEnabled(false)
+                    if (tracker.selection.size() > 0) {
+                      title = getString(R.string.selected, tracker.selection.size())
+                      inflateMenu(R.menu.profiles_selected_menu)
+                      menu.findItem(R.id.action_edit).isVisible = tracker.selection.size() == 1
+                      supportActionBar?.setHomeAsUpIndicator(R.drawable.close_24)
+                      supportActionBar?.setDisplayHomeAsUpEnabled(true)
+                      setOnMenuItemClickListener { menuItem ->
+                        when (menuItem.itemId) {
+                          R.id.action_edit -> {
+                            val intent =
+                                SoundProfileManager.createIntent(
+                                    this@MainActivity, tracker.selection.first().toInt())
+                            soundProfileManagerLauncher.launch(intent)
+                            tracker.clearSelection()
+                            true
+                          }
+                          R.id.action_delete -> {
+                            val selectedProfiles =
+                                soundProfileRecyclerAdapter.getSelectedSoundProfile()
+                            mainViewModel.deleteSoundProfiles(selectedProfiles)
+                            tracker.clearSelection()
+                            true
+                          }
 
-                  binding.toolbar.title =
-                      if (tracker.selection.size() > 0) {
-                        "${tracker.selection.size()} selected"
-                      } else {
-                        "Sound Profiles"
+                          R.id.action_delete_all -> {
+                            mainViewModel.deleteAllSoundProfiles()
+                            tracker.clearSelection()
+                            true
+                          }
+
+                          R.id.action_select_all -> {
+                            soundProfileRecyclerAdapter.selectAll()
+                            true
+                          }
+
+                          else -> false
+                        }
                       }
+                    } else {
+                      title = getString(R.string.app_name)
+                    }
+                  }
                 }
               })
         }
@@ -125,6 +169,16 @@ class MainActivity : AppCompatActivity() {
     binding.fab.setOnClickListener {
       val intent = SoundProfileManager.createIntent(this)
       soundProfileManagerLauncher.launch(intent)
+    }
+  }
+
+  override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    return when (item.itemId) {
+      android.R.id.home -> {
+        tracker.clearSelection()
+        true
+      }
+      else -> super.onOptionsItemSelected(item)
     }
   }
 }

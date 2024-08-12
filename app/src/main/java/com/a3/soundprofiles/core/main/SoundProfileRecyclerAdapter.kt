@@ -64,6 +64,26 @@ class SoundProfileRecyclerAdapter(
   }
 
   override fun getItemId(position: Int): Long = soundProfiles[position].id.toLong()
+
+  fun getSelectedSoundProfile(): List<SoundProfile> {
+    val selectedProfiles = mutableListOf<SoundProfile>()
+    tracker?.let {
+      for (soundProfile in soundProfiles) {
+        if (it.isSelected(soundProfile.id.toLong())) {
+          selectedProfiles.add(soundProfile)
+        }
+      }
+    }
+    return selectedProfiles
+  }
+
+  fun selectAll() {
+    tracker?.let {
+      for (soundProfile in soundProfiles) {
+        it.select(soundProfile.id.toLong())
+      }
+    }
+  }
 }
 
 class CardSoundProfileItemHolder(

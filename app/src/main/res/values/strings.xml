@@ -17,4 +17,9 @@
     <string name="create_sound_profile">Create Sound Profile</string>
     <string name="edit_sound_profile">Edit Sound Profile</string>
     <string name="cancel_schedule">Cancel Schedule</string>
+    <string name="selected">%1$d selected</string>
+    <string name="select_all">Select All</string>
+    <string name="delete_all">Delete All</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
 </resources>
