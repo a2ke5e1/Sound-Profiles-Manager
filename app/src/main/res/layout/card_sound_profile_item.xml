@@ -32,6 +32,35 @@
                 tools:text="Sound Profile Name" />
 
 
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/apply_now_btn"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/apply_now" />
+
+                <Space
+                    android:layout_width="8dp"
+                    android:layout_height="0dp" />
+
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/schedule_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/schedule" />
+
+
+            </LinearLayout>
+
+
         </LinearLayout>
 
 

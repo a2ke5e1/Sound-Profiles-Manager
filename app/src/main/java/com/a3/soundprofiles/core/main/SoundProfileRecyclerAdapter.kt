@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.recyclerview.widget.RecyclerView
 import com.a3.soundprofiles.SoundProfileManager
+import com.a3.soundprofiles.core.SoundProfileScheduler
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.databinding.CardSoundProfileItemBinding
 
@@ -53,12 +54,18 @@ class CardSoundProfileItemHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
 
   fun bind(soundProfile: SoundProfile) {
+    val context = binding.root.context
     binding.title.text = soundProfile.title
     binding.description.text = soundProfile.description
     binding.root.setOnClickListener {
-      val context = binding.root.context
       val intent = SoundProfileManager.createIntent(context, soundProfile.id)
       soundProfileManagerLauncher.launch(intent)
+    }
+
+    binding.applyNowBtn.setOnClickListener { soundProfile.applyProfile(context) }
+    binding.scheduleBtn.setOnClickListener {
+      val soundProfileScheduler = SoundProfileScheduler(context)
+      soundProfileScheduler.scheduleSoundProfileApply(soundProfile)
     }
   }
 }

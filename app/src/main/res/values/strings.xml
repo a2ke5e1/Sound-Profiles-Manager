@@ -12,4 +12,6 @@
     <string name="every_day">Every Day</string>
     <string name="to">To</string>
     <string name="from">From</string>
+    <string name="schedule">Schedule</string>
+    <string name="apply_now">Apply Now</string>
 </resources>

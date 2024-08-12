@@ -6,4 +6,7 @@
     </style>
 
     <style name="Theme.SoundProfiles" parent="Base.Theme.SoundProfiles" />
+
+
+    <style name="Widget.Chip" parent="Widget.Material3.Chip.Filter" />
 </resources>

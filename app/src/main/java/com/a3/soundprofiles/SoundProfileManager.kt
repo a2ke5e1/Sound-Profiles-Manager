@@ -99,7 +99,7 @@ class SoundProfileManager : AppCompatActivity() {
         val chip: Chip = Chip(this)
         val drawable =
             ChipDrawable.createFromAttributes(
-                this, null, 0, com.google.android.material.R.style.Widget_Material3_Chip_Filter)
+                this, null, 0, R.style.Widget_Chip)
         chip.setChipDrawable(drawable)
         chip.text =
             day.name.toString().substring(0, 2).lowercase().replaceFirstChar { it.uppercase() }
@@ -224,7 +224,7 @@ class SoundProfileManager : AppCompatActivity() {
     val datePicker = MaterialDatePicker.Builder.datePicker().build()
 
     val cal = Calendar.getInstance()
-    cal.time = initialDate
+    cal.timeInMillis = if (timeOnly) System.currentTimeMillis() else initialDate.time
     val initialHour = cal.get(Calendar.HOUR_OF_DAY)
     val initialMinute = cal.get(Calendar.MINUTE)
 

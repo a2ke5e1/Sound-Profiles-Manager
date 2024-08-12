@@ -2,6 +2,7 @@ package com.a3.soundprofiles.core.data
 
 import android.content.Context
 import android.media.AudioManager
+import android.util.Log
 import androidx.annotation.FloatRange
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -70,5 +71,7 @@ data class SoundProfile(
     audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, callVolume, 0)
     audioManager.setStreamVolume(AudioManager.STREAM_ALARM, alarmVolume, 0)
     audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, notificationVolume, 0)
+
+    Log.d("SoundProfile", "Profile applied: ${this.title}")
   }
 }
