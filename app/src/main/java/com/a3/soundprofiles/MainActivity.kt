@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
@@ -82,13 +83,21 @@ class MainActivity : AppCompatActivity() {
     mainViewModel.state.observe(this) { state ->
       when (state) {
         is MainState.Loading -> {
-          Toast.makeText(this, "Loading sound profiles", Toast.LENGTH_SHORT).show()
+          binding.nestedScrollView.visibility = View.GONE
+          binding.emptyProfileIndicator.visibility = View.GONE
+          binding.loadingIndicator.visibility = View.VISIBLE
         }
         is MainState.Empty -> {
           soundProfileRecyclerAdapter.updateSoundProfiles(emptyList())
-          Toast.makeText(this, "No sound profiles found", Toast.LENGTH_SHORT).show()
+          binding.nestedScrollView.visibility = View.GONE
+          binding.loadingIndicator.visibility = View.GONE
+          binding.emptyProfileIndicator.visibility = View.VISIBLE
         }
         is MainState.Success -> {
+
+          binding.loadingIndicator.visibility = View.GONE
+          binding.emptyProfileIndicator.visibility = View.GONE
+          binding.nestedScrollView.visibility = View.VISIBLE
 
           val soundProfileRecyclerAdapter =
               binding.recyclerView.adapter as SoundProfileRecyclerAdapter
@@ -111,7 +120,6 @@ class MainActivity : AppCompatActivity() {
                   super.onSelectionChanged()
                   binding.toolbar.apply {
                     menu.clear()
-                    inflateMenu(R.menu.main_menu)
                     supportActionBar?.setDisplayHomeAsUpEnabled(false)
                     if (tracker.selection.size() > 0) {
                       title = getString(R.string.selected, tracker.selection.size())
@@ -153,6 +161,8 @@ class MainActivity : AppCompatActivity() {
                       }
                     } else {
                       title = getString(R.string.app_name)
+                      inflateMenu(R.menu.main_menu)
+                      setOnMenuItemClickListener { menuItem -> onOptionsItemSelected(menuItem) }
                     }
                   }
                 }
@@ -195,11 +205,11 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
-    private fun showInfoMenu(): Boolean {
-        val aboutDialogBox = AboutDialog()
-        aboutDialogBox.show(supportFragmentManager, "about_dialog_box")
-        return true
-    }
+  private fun showInfoMenu(): Boolean {
+    val aboutDialogBox = AboutDialog()
+    aboutDialogBox.show(supportFragmentManager, "about_dialog_box")
+    return true
+  }
 }
 
 fun getCurrentVolume(context: Context): SoundProfile {
