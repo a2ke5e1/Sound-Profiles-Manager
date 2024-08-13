@@ -1,0 +1,19 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.a3.yearlyprogess.MainActivity">
+
+
+    <item
+        android:id="@+id/shareMenu"
+        android:icon="@drawable/share_24"
+        android:title="@string/share"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/infoMenu"
+        android:title="@string/about"
+        app:showAsAction="never" />
+
+
+</menu>

@@ -23,4 +23,9 @@
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
     <string name="date_range">%1$s - %2$s</string>
+    <string name="about">About</string>
+    <string name="share">Share</string>
+    <string name="version">"Version:"</string>
+    <string name="special_thanks_for_translating">Special thanks for translating</string>
+    <string name="join_our_telegram_group">Join our telegram group</string>
 </resources>

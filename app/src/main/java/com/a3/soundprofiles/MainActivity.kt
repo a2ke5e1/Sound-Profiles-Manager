@@ -6,6 +6,7 @@ import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -19,6 +20,7 @@ import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.a3.soundprofiles.AboutDialog.Companion.shareApp
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.core.main.MainState
 import com.a3.soundprofiles.core.main.MainViewModel
@@ -83,7 +85,7 @@ class MainActivity : AppCompatActivity() {
           Toast.makeText(this, "Loading sound profiles", Toast.LENGTH_SHORT).show()
         }
         is MainState.Empty -> {
-            soundProfileRecyclerAdapter.updateSoundProfiles(emptyList())
+          soundProfileRecyclerAdapter.updateSoundProfiles(emptyList())
           Toast.makeText(this, "No sound profiles found", Toast.LENGTH_SHORT).show()
         }
         is MainState.Success -> {
@@ -94,7 +96,7 @@ class MainActivity : AppCompatActivity() {
 
           tracker =
               SelectionTracker.Builder(
-                  "soundProfileSelection",
+                      "soundProfileSelection",
                       binding.recyclerView,
                       SoundProfileItemKeyProvider(binding.recyclerView),
                       SoundProfileItemDetailsLookup(binding.recyclerView),
@@ -109,6 +111,7 @@ class MainActivity : AppCompatActivity() {
                   super.onSelectionChanged()
                   binding.toolbar.apply {
                     menu.clear()
+                    inflateMenu(R.menu.main_menu)
                     supportActionBar?.setDisplayHomeAsUpEnabled(false)
                     if (tracker.selection.size() > 0) {
                       title = getString(R.string.selected, tracker.selection.size())
@@ -172,15 +175,31 @@ class MainActivity : AppCompatActivity() {
     }
   }
 
+  override fun onCreateOptionsMenu(menu: Menu): Boolean {
+    menuInflater.inflate(R.menu.main_menu, menu)
+    return true
+  }
+
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       android.R.id.home -> {
         tracker.clearSelection()
         true
       }
+      R.id.infoMenu -> showInfoMenu()
+      R.id.shareMenu -> {
+        shareApp(this)
+        true
+      }
       else -> super.onOptionsItemSelected(item)
     }
   }
+
+    private fun showInfoMenu(): Boolean {
+        val aboutDialogBox = AboutDialog()
+        aboutDialogBox.show(supportFragmentManager, "about_dialog_box")
+        return true
+    }
 }
 
 fun getCurrentVolume(context: Context): SoundProfile {
