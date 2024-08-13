@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <com.google.android.material.card.MaterialCardView
-        style="@style/Widget.Material3.CardView.Filled"
+        style="@style/Widget.Material3.CardView.Outlined"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="2dp">
@@ -14,37 +15,161 @@
         <View
             android:id="@+id/selection_indicator"
             android:layout_width="match_parent"
-            android:layout_height="4dp"
+            android:layout_height="6dp"
             android:background="?attr/colorPrimary"
             android:visibility="gone" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/title"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
-                tools:text="Sound Profile Name" />
+                android:orientation="vertical"
+                android:padding="8dp">
 
-            <TextView
-                android:id="@+id/description"
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="18dp"
+                        android:layout_height="match_parent"
+                        app:srcCompat="@drawable/calendar_month_24" />
+
+                    <TextView
+                        android:id="@+id/date_range"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                        tools:text="Aug 12, 2024 10:00 - Aug 13, 2024 13:00" />
+
+                    <TextView
+                        android:id="@+id/date_info"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="2dp"
+                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                        tools:text=" · Mo Tu Th" />
+
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                    tools:text="Sound Profile Name" />
+
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="@style/TextAppearance.Material3.BodySmall"
+                    tools:text="Sound Profile Name" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="horizontal"
+                    app:chipSpacingHorizontal="4dp">
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/media_volume"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:clickable="false"
+                        app:checkedIcon="@drawable/music_note_24"
+                        app:checkedIconTint="?attr/colorOnSecondaryContainer"
+                        app:chipIcon="@drawable/music_note_24"
+                        app:textEndPadding="2dp"
+                        app:textStartPadding="4dp"
+                        tools:text="50%" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/call_volume"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:clickable="false"
+                        app:checkedIcon="@drawable/call_24"
+                        app:checkedIconTint="?attr/colorOnSecondaryContainer"
+                        app:chipIcon="@drawable/call_24"
+                        app:textEndPadding="2dp"
+                        app:textStartPadding="4dp"
+                        tools:text="50%" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/ring_volume"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:clickable="false"
+                        app:checkedIcon="@drawable/ring_volume_24"
+                        app:checkedIconTint="?attr/colorOnSecondaryContainer"
+                        app:chipIcon="@drawable/ring_volume_24"
+                        app:textEndPadding="2dp"
+                        app:textStartPadding="4dp"
+                        tools:text="50%" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/notification_volume"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:clickable="false"
+                        app:checkedIcon="@drawable/notifications_24"
+                        app:checkedIconTint="?attr/colorOnSecondaryContainer"
+                        app:chipIcon="@drawable/notifications_24"
+                        app:textEndPadding="2dp"
+                        app:textStartPadding="4dp"
+                        tools:text="50%" />
+
+                    <com.google.android.material.chip.Chip
+                        android:id="@+id/alarm_volume"
+                        style="@style/Widget.Material3.Chip.Filter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:clickable="false"
+                        app:checkedIcon="@drawable/alarm_24"
+                        app:checkedIconTint="?attr/colorOnSecondaryContainer"
+                        app:chipIcon="@drawable/alarm_24"
+                        app:textEndPadding="2dp"
+                        app:textStartPadding="4dp"
+                        tools:text="50%" />
+
+
+                </com.google.android.material.chip.ChipGroup>
+
+
+            </LinearLayout>
+
+
+            <com.google.android.material.divider.MaterialDivider
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textAppearance="@style/TextAppearance.Material3.BodySmall"
-                tools:text="Sound Profile Name" />
-
+                android:layout_height="1dp" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginTop="8dp"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="4dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/apply_now_btn"
@@ -66,7 +191,6 @@
 
 
             </LinearLayout>
-
 
         </LinearLayout>
 

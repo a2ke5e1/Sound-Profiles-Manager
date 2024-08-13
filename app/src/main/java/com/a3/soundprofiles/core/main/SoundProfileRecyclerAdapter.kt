@@ -12,6 +12,7 @@ import androidx.recyclerview.selection.ItemKeyProvider
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.widget.RecyclerView
 import com.a3.soundprofiles.R
+import com.a3.soundprofiles.SoundProfileManager.Companion.toDateTime
 import com.a3.soundprofiles.core.SoundProfileScheduler
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.databinding.CardSoundProfileItemBinding
@@ -93,8 +94,27 @@ class CardSoundProfileItemHolder(
 
   fun bind(soundProfile: SoundProfile, toggleIsActive: (soundProfile: SoundProfile) -> Unit) {
     val context = binding.root.context
+
+    val timeOnly = soundProfile.repeatEveryday || soundProfile.repeatDays.any()
+
     binding.title.text = soundProfile.title
     binding.description.text = soundProfile.description
+
+    binding.description.visibility =
+        if (soundProfile.description.isNotEmpty()) View.VISIBLE else View.GONE
+
+    binding.dateRange.text =
+        context.getString(
+            R.string.date_range,
+            soundProfile.startTime.toDateTime(timeOnly),
+            soundProfile.endTime.toDateTime(timeOnly))
+    binding.dateInfo.text = formatDateInfo(soundProfile)
+
+    binding.mediaVolume.text = volumeToString(soundProfile.mediaVolume)
+    binding.callVolume.text = volumeToString(soundProfile.callVolume)
+    binding.notificationVolume.text = volumeToString(soundProfile.notificationVolume)
+    binding.ringVolume.text = volumeToString(soundProfile.ringerVolume)
+    binding.alarmVolume.text = volumeToString(soundProfile.alarmVolume)
 
     binding.applyNowBtn.setOnClickListener { soundProfile.applyProfile(context) }
     val soundProfileScheduler = SoundProfileScheduler(context)
@@ -116,6 +136,10 @@ class CardSoundProfileItemHolder(
     }
   }
 
+  private fun volumeToString(volume: Float): String {
+    return "${(volume * 100).toInt()}%"
+  }
+
   fun bindSelection(isSelected: Boolean) {
     itemView.isActivated = isSelected
     binding.selectionIndicator.visibility = if (isSelected) View.VISIBLE else View.GONE
@@ -127,6 +151,17 @@ class CardSoundProfileItemHolder(
 
         override fun getSelectionKey(): Long = itemId
       }
+
+  private fun formatDateInfo(soundProfile: SoundProfile): String {
+    return " · " +
+        if (soundProfile.repeatEveryday) {
+          "Every Day"
+        } else {
+          soundProfile.repeatDays.joinToString(" ") { it ->
+            it.name.substring(0, 2).lowercase().replaceFirstChar { c -> c.uppercase() }
+          }
+        }
+  }
 }
 
 class SpaceBetweenItemDecorator(private val spaceHeight: Int) : RecyclerView.ItemDecoration() {

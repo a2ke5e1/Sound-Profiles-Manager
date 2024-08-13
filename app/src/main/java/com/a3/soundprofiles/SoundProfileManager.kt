@@ -188,11 +188,6 @@ class SoundProfileManager : AppCompatActivity() {
     }
   }
 
-  private fun Date.toDateTime(onlyTime: Boolean = false): String {
-    val format = if (onlyTime) "HH:mm" else "MMM dd, yyyy HH:mm"
-    return SimpleDateFormat(format, Locale.getDefault()).format(this)
-  }
-
   private fun Date.setDate(unix: Long): Date {
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = unix
@@ -281,5 +276,10 @@ class SoundProfileManager : AppCompatActivity() {
         Intent(context, SoundProfileManager::class.java).apply {
           putExtra(SOUND_PROFILE_ID, soundProfileId)
         }
+
+    fun Date.toDateTime(onlyTime: Boolean = false): String {
+      val format = if (onlyTime) "HH:mm" else "MMM dd, yyyy HH:mm"
+      return SimpleDateFormat(format, Locale.getDefault()).format(this)
+    }
   }
 }
