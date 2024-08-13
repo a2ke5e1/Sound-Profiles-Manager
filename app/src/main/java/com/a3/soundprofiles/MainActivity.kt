@@ -28,6 +28,9 @@ import com.a3.soundprofiles.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
 
+/**
+ * MainActivity is the entry point of the application, responsible for displaying and managing sound profiles.
+ */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -42,6 +45,10 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+    /**
+     * Called when the activity is first created.
+     * @param savedInstanceState If the activity is being re-initialized after previously being shut down then this Bundle contains the data it most recently supplied.
+     */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -58,6 +65,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Sets up window insets to handle system bars.
+     */
     private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.appBarLayout) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -71,6 +81,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Sets up the RecyclerView with an adapter and layout manager.
+     */
     private fun setupRecyclerView() {
         val adapter = SoundProfileRecyclerAdapter(
             mutableListOf(),
@@ -84,6 +97,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Observes changes in the ViewModel's state and updates the UI accordingly.
+     */
     private fun observeViewModel() {
         mainViewModel.state.observe(this) { state ->
             when (state) {
@@ -95,6 +111,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Displays a loading indicator.
+     */
     private fun showLoading() {
         binding.apply {
             nestedScrollView.visibility = View.GONE
@@ -103,6 +122,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Displays an empty state when there are no sound profiles.
+     */
     private fun showEmptyState() {
         (binding.recyclerView.adapter as SoundProfileRecyclerAdapter).updateSoundProfiles(emptyList())
         binding.apply {
@@ -112,6 +134,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Displays the list of sound profiles.
+     * @param soundProfiles List of sound profiles to display.
+     */
     private fun showSuccessState(soundProfiles: List<SoundProfile>) {
         binding.apply {
             loadingIndicator.visibility = View.GONE
@@ -123,6 +149,10 @@ class MainActivity : AppCompatActivity() {
         setupSelectionTracker(adapter)
     }
 
+    /**
+     * Sets up the selection tracker for the RecyclerView.
+     * @param adapter The adapter for the RecyclerView.
+     */
     private fun setupSelectionTracker(adapter: SoundProfileRecyclerAdapter) {
         tracker = SelectionTracker.Builder(
             "soundProfileSelection",
@@ -140,6 +170,9 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    /**
+     * Updates the toolbar menu based on the selection state.
+     */
     private fun updateToolbarMenu() {
         binding.toolbar.apply {
             menu.clear()
@@ -159,6 +192,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Handles menu item clicks.
+     * @param menuItem The menu item that was clicked.
+     * @return True if the menu item click was handled, false otherwise.
+     */
     private fun handleMenuItemClick(menuItem: MenuItem): Boolean {
         return when (menuItem.itemId) {
             R.id.action_edit -> {
@@ -187,15 +225,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Displays an error message.
+     * @param message The error message to display.
+     */
     private fun showError(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
+    /**
+     * Inflates the options menu.
+     * @param menu The options menu in which you place your items.
+     * @return True for the menu to be displayed; false otherwise.
+     */
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
     }
 
+    /**
+     * Handles options menu item clicks.
+     * @param item The menu item that was clicked.
+     * @return True if the menu item click was handled, false otherwise.
+     */
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
@@ -211,15 +263,29 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * Displays the info menu.
+     * @return True if the info menu was displayed, false otherwise.
+     */
     private fun showInfoMenu(): Boolean {
         AboutDialog().show(supportFragmentManager, "about_dialog_box")
         return true
     }
 }
 
+/**
+ * Retrieves the current volume settings and creates a SoundProfile object.
+ * @param context The context to use for retrieving the AudioManager.
+ * @return A SoundProfile object representing the current volume settings.
+ */
 fun getCurrentVolume(context: Context): SoundProfile {
     val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
 
+    /**
+     * Retrieves the volume level for a given audio stream.
+     * @param stream The audio stream type.
+     * @return The volume level as a float between 0 and 1.
+     */
     fun getVolume(stream: Int): Float {
         val min = audioManager.getStreamMinVolume(stream)
         val max = audioManager.getStreamMaxVolume(stream)

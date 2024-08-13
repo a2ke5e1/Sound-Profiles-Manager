@@ -164,6 +164,9 @@ class SoundProfileManager : AppCompatActivity() {
 
     binding.title.doAfterTextChanged {
       if (isProgrammaticChange) return@doAfterTextChanged
+      if (!isTitleEmpty()) {
+        binding.titleContainer.error = null
+      }
       val cursorPosition = binding.title.selectionStart
       createEditSoundProfileViewModel.setTitle(it.toString())
       binding.title.setSelection(cursorPosition)
@@ -181,11 +184,20 @@ class SoundProfileManager : AppCompatActivity() {
     }
 
     binding.saveSoundProfile.setOnClickListener {
-      createEditSoundProfileViewModel.saveSoundProfile()
-      Log.d("SoundProfileManager", "Setting result to RESULT_OK")
-      setResult(RESULT_OK)
-      finish()
+      if (isTitleEmpty()) {
+        binding.titleContainer.error = getString(R.string.error_empty_title)
+      } else {
+        binding.titleContainer.error = null
+        createEditSoundProfileViewModel.saveSoundProfile()
+        Log.d("SoundProfileManager", "Setting result to RESULT_OK")
+        setResult(RESULT_OK)
+        finish()
+      }
     }
+  }
+
+  private fun isTitleEmpty(): Boolean {
+    return binding.title.text.isNullOrEmpty()
   }
 
   private fun Date.setDate(unix: Long): Date {
