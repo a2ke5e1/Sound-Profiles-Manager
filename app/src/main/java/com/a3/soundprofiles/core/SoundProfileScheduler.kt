@@ -1,9 +1,11 @@
 package com.a3.soundprofiles.core
 
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.widget.Toast
 import com.a3.soundprofiles.core.dao.SoundProfileDao
 import com.a3.soundprofiles.core.data.SoundProfile
@@ -18,6 +20,7 @@ import kotlin.jvm.java
 class SoundProfileScheduler(private val context: Context) {
   private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
+  @SuppressLint("ScheduleExactAlarm")
   fun scheduleSoundProfileApply(soundProfile: SoundProfile) {
     val startIntent =
         Intent(context, SoundProfileApplyBroadcastReceiver::class.java).apply {
@@ -29,7 +32,7 @@ class SoundProfileScheduler(private val context: Context) {
             soundProfile.id.hashCode(),
             startIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-    alarmManager.setAndAllowWhileIdle(
+    alarmManager.setExactAndAllowWhileIdle(
         AlarmManager.RTC_WAKEUP, soundProfile.startTime.time, startPendingIntent)
 
     val endIntent =
@@ -43,7 +46,7 @@ class SoundProfileScheduler(private val context: Context) {
             (soundProfile.id.toString() + "_end").hashCode(),
             endIntent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-    alarmManager.setAndAllowWhileIdle(
+    alarmManager.setExactAndAllowWhileIdle(
         AlarmManager.RTC_WAKEUP, soundProfile.endTime.time, endPendingIntent)
     Toast.makeText(context, "'${soundProfile.title}' profile scheduled", Toast.LENGTH_SHORT).show()
   }
@@ -115,6 +118,14 @@ class SoundProfileScheduler(private val context: Context) {
     calendar.add(Calendar.DATE, days)
     return calendar.time
   }
+
+    fun hasScheduleExactAlarm(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            alarmManager.canScheduleExactAlarms()
+        } else {
+            true
+        }
+    }
 
   companion object {
     const val SOUND_PROFILE_ID = "soundProfileId"

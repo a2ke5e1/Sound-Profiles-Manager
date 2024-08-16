@@ -1,4 +1,4 @@
-package com.a3.soundprofiles
+package com.a3.soundprofiles.core.ui.components
 
 import android.annotation.SuppressLint
 import android.app.Dialog
@@ -13,8 +13,13 @@ import android.text.method.LinkMovementMethod
 import android.text.style.URLSpan
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.DialogFragment
+import com.a3.soundprofiles.BuildConfig
+import com.a3.soundprofiles.R
 import com.a3.soundprofiles.databinding.DialogAboutBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import java.lang.IllegalStateException
+import kotlin.let
+import kotlin.text.trimIndent
 
 data class Credits(val username: String, val language: String) {
   fun getClickableCredit(): SpannableString {

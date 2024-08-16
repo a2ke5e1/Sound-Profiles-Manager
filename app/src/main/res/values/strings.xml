@@ -30,4 +30,6 @@
     <string name="join_our_telegram_group">Join our telegram group</string>
     <string name="no_sound_profiles">No Sound Profiles</string>
     <string name="error_empty_title">Title cannot be empty</string>
+    <string name="dismiss">Dismiss</string>
+    <string name="i_understand">I Understand</string>
 </resources>

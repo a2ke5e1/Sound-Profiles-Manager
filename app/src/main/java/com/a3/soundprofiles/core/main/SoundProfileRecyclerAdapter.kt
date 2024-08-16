@@ -2,11 +2,14 @@ package com.a3.soundprofiles.core.main
 
 import android.content.Intent
 import android.graphics.Rect
+import android.os.Build
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.ItemKeyProvider
 import androidx.recyclerview.selection.SelectionTracker
@@ -15,10 +18,12 @@ import com.a3.soundprofiles.R
 import com.a3.soundprofiles.SoundProfileManager.Companion.toDateTime
 import com.a3.soundprofiles.core.SoundProfileScheduler
 import com.a3.soundprofiles.core.data.SoundProfile
+import com.a3.soundprofiles.core.di.components.PermissionMessageDialog
 import com.a3.soundprofiles.databinding.CardSoundProfileItemBinding
 
 class SoundProfileRecyclerAdapter(
     val soundProfiles: MutableList<SoundProfile>,
+    val activity: AppCompatActivity,
     private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>,
     private val toggleIsActive: (soundProfile: SoundProfile) -> Unit
 ) : RecyclerView.Adapter<CardSoundProfileItemHolder>() {
@@ -34,7 +39,7 @@ class SoundProfileRecyclerAdapter(
     // Create a new view, which defines the UI of the list item
     val inflater = LayoutInflater.from(viewGroup.context)
     val binding = CardSoundProfileItemBinding.inflate(inflater, viewGroup, false)
-    return CardSoundProfileItemHolder(binding, soundProfileManagerLauncher)
+    return CardSoundProfileItemHolder(activity, binding, soundProfileManagerLauncher)
   }
 
   // Replace the contents of a view (invoked by the layout manager)
@@ -88,6 +93,7 @@ class SoundProfileRecyclerAdapter(
 }
 
 class CardSoundProfileItemHolder(
+    val activity: AppCompatActivity,
     val binding: CardSoundProfileItemBinding,
     private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>,
 ) : RecyclerView.ViewHolder(binding.root) {
@@ -125,6 +131,10 @@ class CardSoundProfileItemHolder(
     }
 
     binding.scheduleBtn.setOnClickListener {
+      if (!handleExactAlarmPermission()) {
+        return@setOnClickListener
+      }
+
       if (soundProfile.isActive) {
         binding.scheduleBtn.text = context.getString(R.string.schedule)
         soundProfileScheduler.cancelScheduledSoundProfileApply(soundProfile)
@@ -134,6 +144,33 @@ class CardSoundProfileItemHolder(
       }
       toggleIsActive(soundProfile)
     }
+  }
+
+  private fun handleExactAlarmPermission(): Boolean {
+    val context = binding.root.context
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+
+      val scheduleExactAlarmDialogBox =
+          PermissionMessageDialog(
+              icon = R.drawable.alarm_24,
+              title = "getString(R.string.location_permission_title)",
+              message = "getString(R.string.location_permission_message)") {
+                Intent().also { intent ->
+                  intent.action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
+                  context.startActivity(intent)
+                }
+              }
+
+      val alarmManager = SoundProfileScheduler(context)
+      val hasPermission = alarmManager.hasScheduleExactAlarm()
+
+      if (!hasPermission) {
+        scheduleExactAlarmDialogBox.show(
+            activity.supportFragmentManager, "scheduleExactAlarmDialogBox")
+        return false
+      }
+    }
+    return true
   }
 
   private fun volumeToString(volume: Float): String {

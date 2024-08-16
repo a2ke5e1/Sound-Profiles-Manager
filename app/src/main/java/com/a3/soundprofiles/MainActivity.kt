@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -15,15 +14,17 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.a3.soundprofiles.AboutDialog.Companion.shareApp
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.core.main.*
+import com.a3.soundprofiles.core.ui.components.AboutDialog
+import com.a3.soundprofiles.core.ui.components.AboutDialog.Companion.shareApp
 import com.a3.soundprofiles.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Date
@@ -51,6 +52,8 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        installSplashScreen()
+
         binding = ActivityMainBinding.inflate(layoutInflater)
         enableEdgeToEdge()
         setContentView(binding.root)
@@ -87,6 +90,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         val adapter = SoundProfileRecyclerAdapter(
             mutableListOf(),
+            this,
             soundProfileManagerLauncher,
             mainViewModel::toggleIsActive
         )
