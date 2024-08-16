@@ -153,8 +153,8 @@ class CardSoundProfileItemHolder(
       val scheduleExactAlarmDialogBox =
           PermissionMessageDialog(
               icon = R.drawable.alarm_24,
-              title = "getString(R.string.location_permission_title)",
-              message = "getString(R.string.location_permission_message)") {
+              title = context.getString(R.string.exact_alarm_permission_title),
+              message = context.getString(R.string.exact_alarm_permission_message)) {
                 Intent().also { intent ->
                   intent.action = Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM
                   context.startActivity(intent)

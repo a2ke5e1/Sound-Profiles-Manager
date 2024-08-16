@@ -32,4 +32,9 @@
     <string name="error_empty_title">Title cannot be empty</string>
     <string name="dismiss">Dismiss</string>
     <string name="i_understand">I Understand</string>
+    <string name="exact_alarm_permission_title">Schedule exact alarms</string>
+    <string name="exact_alarm_permission_message">
+        App need to use the Schedule Exact Alarms permission to automatically change sound profiles.\n\nThis is crucial for ensuring that sound profiles are changed at the specified times without delay, even if the device is in Doze mode or has battery optimizations enabled.
+        \n\nThis permission ensures the reliability and accuracy of scheduled sound profile changes.
+    </string>
 </resources>
