@@ -10,7 +10,10 @@
         style="@style/Widget.Material3.CardView.Outlined"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="2dp">
+        android:layout_margin="2dp"
+        app:cardBackgroundColor="?attr/colorSurfaceContainerLowest"
+        app:cardCornerRadius="16dp"
+        app:strokeWidth="0dp">
 
         <View
             android:id="@+id/selection_indicator"
@@ -89,13 +92,17 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
+                        android:minWidth="60dp"
+                        android:textAlignment="viewEnd"
                         android:clickable="false"
+                        android:textSize="11sp"
                         app:checkedIcon="@drawable/music_note_24"
                         app:checkedIconTint="?attr/colorOnSecondaryContainer"
                         app:chipIcon="@drawable/music_note_24"
+                        app:chipIconSize="10dp"
                         app:textEndPadding="2dp"
                         app:textStartPadding="4dp"
-                        tools:text="50%" />
+                        tools:text="100%" />
 
                     <com.google.android.material.chip.Chip
                         android:id="@+id/call_volume"
@@ -103,10 +110,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
+                        android:minWidth="60dp"
+                        android:textAlignment="viewEnd"
                         android:clickable="false"
+                        android:textSize="11sp"
                         app:checkedIcon="@drawable/call_24"
                         app:checkedIconTint="?attr/colorOnSecondaryContainer"
                         app:chipIcon="@drawable/call_24"
+                        app:chipIconSize="10dp"
                         app:textEndPadding="2dp"
                         app:textStartPadding="4dp"
                         tools:text="50%" />
@@ -117,10 +128,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
+                        android:minWidth="60dp"
+                        android:textAlignment="viewEnd"
                         android:clickable="false"
+                        android:textSize="11sp"
                         app:checkedIcon="@drawable/ring_volume_24"
                         app:checkedIconTint="?attr/colorOnSecondaryContainer"
                         app:chipIcon="@drawable/ring_volume_24"
+                        app:chipIconSize="10dp"
                         app:textEndPadding="2dp"
                         app:textStartPadding="4dp"
                         tools:text="50%" />
@@ -131,10 +146,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
+                        android:minWidth="60dp"
+                        android:textAlignment="viewEnd"
                         android:clickable="false"
+                        android:textSize="11sp"
                         app:checkedIcon="@drawable/notifications_24"
                         app:checkedIconTint="?attr/colorOnSecondaryContainer"
                         app:chipIcon="@drawable/notifications_24"
+                        app:chipIconSize="10dp"
                         app:textEndPadding="2dp"
                         app:textStartPadding="4dp"
                         tools:text="50%" />
@@ -145,10 +164,14 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
+                        android:minWidth="60dp"
+                        android:textAlignment="viewEnd"
                         android:clickable="false"
+                        android:textSize="11sp"
                         app:checkedIcon="@drawable/alarm_24"
                         app:checkedIconTint="?attr/colorOnSecondaryContainer"
                         app:chipIcon="@drawable/alarm_24"
+                        app:chipIconSize="10dp"
                         app:textEndPadding="2dp"
                         app:textStartPadding="4dp"
                         tools:text="50%" />
@@ -169,7 +192,10 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:orientation="horizontal"
-                android:padding="4dp">
+                android:paddingStart="8dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="8dp"
+                android:paddingBottom="4dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/apply_now_btn"

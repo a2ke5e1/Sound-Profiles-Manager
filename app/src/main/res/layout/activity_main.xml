@@ -3,12 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
+    android:background="?attr/colorSurface"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
+        android:background="?attr/colorSurface"
+        app:liftOnScroll="false"
         android:layout_height="wrap_content">
 
         <com.google.android.material.appbar.MaterialToolbar
@@ -35,7 +38,11 @@
         <com.google.android.material.imageview.ShapeableImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_launcher_foreground" />
+            android:src="@mipmap/ic_launcher" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="8dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -50,6 +57,7 @@
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -63,6 +71,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:paddingStart="8dp"
+                tools:itemCount="12"
+                tools:listitem="@layout/card_sound_profile_item"
                 android:paddingEnd="8dp" />
 
 
