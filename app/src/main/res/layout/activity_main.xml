@@ -42,22 +42,55 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp">
 
-            <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
-                android:id="@+id/currentUserVolumeView"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal">
+
+                <androidx.constraintlayout.helper.widget.Flow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:constraint_referenced_ids="user_ringer_volume, user_media_volume, user_call_volume, user_notification_volume, user_alarm_volume" />
+
+                <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
+                    android:id="@+id/user_ringer_volume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
+                    android:id="@+id/user_media_volume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
+                    android:id="@+id/user_call_volume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
+                    android:id="@+id/user_notification_volume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
+                    android:id="@+id/user_alarm_volume"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
 
             <TextView
-                android:textColor="?attr/colorPrimary"
-                android:textAllCaps="false"
-                android:textStyle="bold"
-                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                android:text="@string/sound_profiles" />
+                android:text="@string/sound_profiles"
+                android:textAllCaps="false"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:textColor="?attr/colorPrimary"
+                android:textStyle="bold" />
 
             <Space
                 android:layout_width="0dp"
@@ -68,8 +101,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:visibility="visible"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="match_parent"

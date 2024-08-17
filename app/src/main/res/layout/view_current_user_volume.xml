@@ -1,37 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/mediaVolumeTextView"
+    <com.google.android.material.imageview.ShapeableImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Media Volume: 0%" />
+        android:layout_gravity="top|center_horizontal"
+        android:layout_margin="8dp"
+        android:id="@+id/icon"
+        app:srcCompat="@drawable/ring_volume_24" />
 
-    <TextView
-        android:id="@+id/notificationVolumeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Notification Volume: 0%" />
 
-    <TextView
-        android:id="@+id/ringerVolumeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ringer Volume: 0%" />
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="50dp"
+        android:layout_height="100dp"
+        android:layout_gravity="center_horizontal"
+        app:cardElevation="0dp"
+        android:id="@+id/volume_container"
+        app:strokeColor="?attr/colorPrimary"
+        app:strokeWidth="1dp">
 
-    <TextView
-        android:id="@+id/callVolumeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Call Volume: 0%" />
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/volume_progress_bar"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="bottom"
+            app:cardBackgroundColor="?attr/colorPrimary"
+            app:cardCornerRadius="0dp"
+            app:cardElevation="0dp"
+            app:strokeWidth="0dp" />
 
-    <TextView
-        android:id="@+id/alarmVolumeTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Alarm Volume: 0%" />
+        <TextView
+            android:id="@+id/volume_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_marginBottom="8dp"
+            android:text="50%"
+            android:textStyle="bold"
+            android:textColor="?attr/colorOnPrimary" />
+
+    </com.google.android.material.card.MaterialCardView>
+
 </LinearLayout>
