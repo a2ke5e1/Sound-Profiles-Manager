@@ -3,16 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
-    android:background="?attr/colorSurface"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="?attr/colorSurface">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:background="?attr/colorSurface"
-        app:liftOnScroll="false"
-        android:layout_height="wrap_content">
+        app:liftOnScroll="false">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -28,31 +28,6 @@
         android:layout_gravity="center"
         android:indeterminate="true" />
 
-    <LinearLayout
-        android:id="@+id/emptyProfileIndicator"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:orientation="vertical">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_launcher" />
-
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="8dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/no_sound_profiles"
-            android:textAlignment="center"
-            android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
-
-    </LinearLayout>
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/nestedScrollView"
         android:layout_width="match_parent"
@@ -60,23 +35,70 @@
         android:layout_marginBottom="8dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".MainActivity">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
 
+            <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
+                android:id="@+id/currentUserVolumeView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+            <TextView
+                android:textColor="?attr/colorPrimary"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                android:text="@string/sound_profiles" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="8dp" />
+
+            <LinearLayout
+                android:id="@+id/emptyProfileIndicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="visible"
+                android:orientation="vertical">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@mipmap/ic_launcher" />
+
+                <Space
+                    android:layout_width="0dp"
+                    android:layout_height="8dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/no_sound_profiles"
+                    android:textAlignment="center"
+                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+            </LinearLayout>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingStart="8dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
                 tools:itemCount="12"
-                tools:listitem="@layout/card_sound_profile_item"
-                android:paddingEnd="8dp" />
+                tools:listitem="@layout/card_sound_profile_item" />
 
+        </LinearLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

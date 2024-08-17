@@ -1,4 +1,4 @@
-package com.a3.soundprofiles.core.ui.components
+package com.a3.soundprofiles.core.ui.dialogbox
 
 import android.annotation.SuppressLint
 import android.app.Dialog

@@ -1,14 +1,13 @@
 package com.a3.soundprofiles
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
-import android.media.AudioManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -23,12 +22,11 @@ import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.core.main.*
-import com.a3.soundprofiles.core.ui.components.AboutDialog
-import com.a3.soundprofiles.core.ui.components.AboutDialog.Companion.shareApp
+import com.a3.soundprofiles.core.ui.dialogbox.AboutDialog
+import com.a3.soundprofiles.core.ui.dialogbox.AboutDialog.Companion.shareApp
 import com.a3.soundprofiles.databinding.ActivityMainBinding
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Date
 
 /**
  * MainActivity is the entry point of the application, responsible for displaying and managing sound profiles.
@@ -67,6 +65,16 @@ class MainActivity : AppCompatActivity() {
             val intent = SoundProfileManager.createIntent(this)
             soundProfileManagerLauncher.launch(intent)
         }
+
+        this.onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (tracker.hasSelection()) {
+                    tracker.clearSelection()
+                } else {
+                    finish()
+                }
+            }
+        })
     }
 
     /**
@@ -116,7 +124,7 @@ class MainActivity : AppCompatActivity() {
      */
     private fun showLoading() {
         binding.apply {
-            nestedScrollView.visibility = View.GONE
+            recyclerView.visibility = View.GONE
             emptyProfileIndicator.visibility = View.GONE
             loadingIndicator.visibility = View.VISIBLE
         }
@@ -128,7 +136,7 @@ class MainActivity : AppCompatActivity() {
     private fun showEmptyState() {
         (binding.recyclerView.adapter as SoundProfileRecyclerAdapter).updateSoundProfiles(emptyList())
         binding.apply {
-            nestedScrollView.visibility = View.GONE
+            recyclerView.visibility = View.GONE
             loadingIndicator.visibility = View.GONE
             emptyProfileIndicator.visibility = View.VISIBLE
         }
@@ -140,9 +148,9 @@ class MainActivity : AppCompatActivity() {
      */
     private fun showSuccessState(soundProfiles: List<SoundProfile>) {
         binding.apply {
+            recyclerView.visibility = View.VISIBLE
             loadingIndicator.visibility = View.GONE
             emptyProfileIndicator.visibility = View.GONE
-            nestedScrollView.visibility = View.VISIBLE
         }
         val adapter = binding.recyclerView.adapter as SoundProfileRecyclerAdapter
         adapter.updateSoundProfiles(soundProfiles)
@@ -271,40 +279,4 @@ class MainActivity : AppCompatActivity() {
         AboutDialog().show(supportFragmentManager, "about_dialog_box")
         return true
     }
-}
-
-/**
- * Retrieves the current volume settings and creates a SoundProfile object.
- * @param context The context to use for retrieving the AudioManager.
- * @return A SoundProfile object representing the current volume settings.
- */
-fun getCurrentVolume(context: Context): SoundProfile {
-    val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
-
-    /**
-     * Retrieves the volume level for a given audio stream.
-     * @param stream The audio stream type.
-     * @return The volume level as a float between 0 and 1.
-     */
-    fun getVolume(stream: Int): Float {
-        val min = audioManager.getStreamMinVolume(stream)
-        val max = audioManager.getStreamMaxVolume(stream)
-        return (audioManager.getStreamVolume(stream) - min) / (max - min).toFloat()
-    }
-
-    return SoundProfile(
-        id = 0,
-        title = "Current Profile ${Date()}",
-        description = "Current volume settings",
-        mediaVolume = getVolume(AudioManager.STREAM_MUSIC),
-        notificationVolume = getVolume(AudioManager.STREAM_NOTIFICATION),
-        ringerVolume = getVolume(AudioManager.STREAM_RING),
-        callVolume = getVolume(AudioManager.STREAM_VOICE_CALL),
-        alarmVolume = getVolume(AudioManager.STREAM_ALARM),
-        startTime = Date(),
-        endTime = Date(),
-        isActive = false,
-        repeatEveryday = false,
-        repeatDays = emptyList()
-    )
 }

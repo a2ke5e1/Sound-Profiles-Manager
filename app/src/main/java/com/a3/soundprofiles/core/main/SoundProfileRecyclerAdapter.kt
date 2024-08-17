@@ -173,10 +173,6 @@ class CardSoundProfileItemHolder(
     return true
   }
 
-  private fun volumeToString(volume: Float): String {
-    return "${(volume * 100).toInt()}%"
-  }
-
   fun bindSelection(isSelected: Boolean) {
     itemView.isActivated = isSelected
     binding.selectionIndicator.visibility = if (isSelected) View.VISIBLE else View.GONE
@@ -198,6 +194,12 @@ class CardSoundProfileItemHolder(
             it.name.substring(0, 2).lowercase().replaceFirstChar { c -> c.uppercase() }
           }
         }
+  }
+
+  companion object {
+    fun volumeToString(volume: Float): String {
+      return "${(volume * 100).toInt()}%"
+    }
   }
 }
 

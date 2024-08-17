@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/mediaVolumeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Media Volume: 0%" />
+
+    <TextView
+        android:id="@+id/notificationVolumeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Notification Volume: 0%" />
+
+    <TextView
+        android:id="@+id/ringerVolumeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Ringer Volume: 0%" />
+
+    <TextView
+        android:id="@+id/callVolumeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Call Volume: 0%" />
+
+    <TextView
+        android:id="@+id/alarmVolumeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alarm Volume: 0%" />
+</LinearLayout>
