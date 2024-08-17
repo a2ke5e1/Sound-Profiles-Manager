@@ -42,6 +42,7 @@
                     <com.google.android.material.imageview.ShapeableImageView
                         android:layout_width="18dp"
                         android:layout_height="match_parent"
+                        app:tint="?attr/colorTertiary"
                         app:srcCompat="@drawable/calendar_month_24" />
 
                     <TextView
@@ -49,6 +50,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="2dp"
+                        android:textColor="?attr/colorTertiary"
                         android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                         tools:text="Aug 12, 2024 10:00 - Aug 13, 2024 13:00" />
 
@@ -57,6 +59,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="2dp"
+                        android:textColor="?attr/colorTertiary"
                         android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
                         tools:text=" · Mo Tu Th" />
 
@@ -68,6 +71,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textColor="?attr/colorPrimary"
                     android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
                     tools:text="Sound Profile Name" />
 
@@ -75,109 +79,121 @@
                 <TextView
                     android:id="@+id/description"
                     android:layout_width="match_parent"
+                    android:layout_marginTop="-4dp"
+                    android:layout_marginStart="2dp"
                     android:layout_height="wrap_content"
+                    android:textColor="?attr/colorOnSurfaceVariant"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                     tools:text="Sound Profile Name" />
 
-                <com.google.android.material.chip.ChipGroup
+
+                <HorizontalScrollView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    app:chipSpacingHorizontal="4dp">
+                    android:scrollbars="none">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/media_volume"
-                        style="@style/Widget.Material3.Chip.Filter"
+
+                    <com.google.android.material.chip.ChipGroup
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:minWidth="60dp"
-                        android:textAlignment="viewEnd"
-                        android:clickable="false"
-                        android:textSize="11sp"
-                        app:checkedIcon="@drawable/music_note_24"
-                        app:checkedIconTint="?attr/colorOnSecondaryContainer"
-                        app:chipIcon="@drawable/music_note_24"
-                        app:chipIconSize="10dp"
-                        app:textEndPadding="2dp"
-                        app:textStartPadding="4dp"
-                        tools:text="100%" />
+                        android:layout_marginTop="8dp"
+                        android:orientation="horizontal"
+                        app:chipSpacingHorizontal="4dp">
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/call_volume"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:minWidth="60dp"
-                        android:textAlignment="viewEnd"
-                        android:clickable="false"
-                        android:textSize="11sp"
-                        app:checkedIcon="@drawable/call_24"
-                        app:checkedIconTint="?attr/colorOnSecondaryContainer"
-                        app:chipIcon="@drawable/call_24"
-                        app:chipIconSize="10dp"
-                        app:textEndPadding="2dp"
-                        app:textStartPadding="4dp"
-                        tools:text="50%" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/media_volume"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:clickable="false"
+                            android:minWidth="60dp"
+                            android:textAlignment="viewEnd"
+                            android:textSize="11sp"
+                            app:checkedIcon="@drawable/music_note_24"
+                            app:checkedIconTint="?attr/colorOnSecondaryContainer"
+                            app:chipIcon="@drawable/music_note_24"
+                            app:chipIconSize="10dp"
+                            app:textEndPadding="2dp"
+                            app:textStartPadding="4dp"
+                            tools:text="100%" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/ring_volume"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:minWidth="60dp"
-                        android:textAlignment="viewEnd"
-                        android:clickable="false"
-                        android:textSize="11sp"
-                        app:checkedIcon="@drawable/ring_volume_24"
-                        app:checkedIconTint="?attr/colorOnSecondaryContainer"
-                        app:chipIcon="@drawable/ring_volume_24"
-                        app:chipIconSize="10dp"
-                        app:textEndPadding="2dp"
-                        app:textStartPadding="4dp"
-                        tools:text="50%" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/call_volume"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:clickable="false"
+                            android:minWidth="60dp"
+                            android:textAlignment="viewEnd"
+                            android:textSize="11sp"
+                            app:checkedIcon="@drawable/call_24"
+                            app:checkedIconTint="?attr/colorOnSecondaryContainer"
+                            app:chipIcon="@drawable/call_24"
+                            app:chipIconSize="10dp"
+                            app:textEndPadding="2dp"
+                            app:textStartPadding="4dp"
+                            tools:text="50%" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/notification_volume"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:minWidth="60dp"
-                        android:textAlignment="viewEnd"
-                        android:clickable="false"
-                        android:textSize="11sp"
-                        app:checkedIcon="@drawable/notifications_24"
-                        app:checkedIconTint="?attr/colorOnSecondaryContainer"
-                        app:chipIcon="@drawable/notifications_24"
-                        app:chipIconSize="10dp"
-                        app:textEndPadding="2dp"
-                        app:textStartPadding="4dp"
-                        tools:text="50%" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/ring_volume"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:clickable="false"
+                            android:minWidth="60dp"
+                            android:textAlignment="viewEnd"
+                            android:textSize="11sp"
+                            app:checkedIcon="@drawable/ring_volume_24"
+                            app:checkedIconTint="?attr/colorOnSecondaryContainer"
+                            app:chipIcon="@drawable/ring_volume_24"
+                            app:chipIconSize="10dp"
+                            app:textEndPadding="2dp"
+                            app:textStartPadding="4dp"
+                            tools:text="50%" />
 
-                    <com.google.android.material.chip.Chip
-                        android:id="@+id/alarm_volume"
-                        style="@style/Widget.Material3.Chip.Filter"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:checked="true"
-                        android:minWidth="60dp"
-                        android:textAlignment="viewEnd"
-                        android:clickable="false"
-                        android:textSize="11sp"
-                        app:checkedIcon="@drawable/alarm_24"
-                        app:checkedIconTint="?attr/colorOnSecondaryContainer"
-                        app:chipIcon="@drawable/alarm_24"
-                        app:chipIconSize="10dp"
-                        app:textEndPadding="2dp"
-                        app:textStartPadding="4dp"
-                        tools:text="50%" />
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/notification_volume"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:clickable="false"
+                            android:minWidth="60dp"
+                            android:textAlignment="viewEnd"
+                            android:textSize="11sp"
+                            app:checkedIcon="@drawable/notifications_24"
+                            app:checkedIconTint="?attr/colorOnSecondaryContainer"
+                            app:chipIcon="@drawable/notifications_24"
+                            app:chipIconSize="10dp"
+                            app:textEndPadding="2dp"
+                            app:textStartPadding="4dp"
+                            tools:text="50%" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/alarm_volume"
+                            style="@style/Widget.Material3.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:clickable="false"
+                            android:minWidth="60dp"
+                            android:textAlignment="viewEnd"
+                            android:textSize="11sp"
+                            app:checkedIcon="@drawable/alarm_24"
+                            app:checkedIconTint="?attr/colorOnSecondaryContainer"
+                            app:chipIcon="@drawable/alarm_24"
+                            app:chipIconSize="10dp"
+                            app:textEndPadding="2dp"
+                            app:textStartPadding="4dp"
+                            tools:text="50%" />
 
 
-                </com.google.android.material.chip.ChipGroup>
+                    </com.google.android.material.chip.ChipGroup>
+
+                </HorizontalScrollView>
 
 
             </LinearLayout>
@@ -192,10 +208,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:orientation="horizontal"
-                android:paddingStart="8dp"
-                android:paddingTop="4dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="4dp">
+                android:padding="8dp">
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/apply_now_btn"
