@@ -1,8 +1,11 @@
 package com.a3.soundprofiles
 
+import android.Manifest
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.media.AudioManager
+import android.os.Build
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -13,7 +16,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -22,6 +28,7 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.a3.soundprofiles.core.data.SoundProfile
+import com.a3.soundprofiles.core.di.components.PermissionMessageDialog
 import com.a3.soundprofiles.core.main.*
 import com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
 import com.a3.soundprofiles.core.ui.dialogbox.AboutDialog
@@ -48,6 +55,9 @@ class MainActivity : AppCompatActivity() {
         }
       }
 
+  private val requestPermissionLauncher =
+      registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
+
   /**
    * Called when the activity is first created.
    *
@@ -69,6 +79,9 @@ class MainActivity : AppCompatActivity() {
     binding.fab.setOnClickListener {
       val intent = SoundProfileManager.createIntent(this)
       soundProfileManagerLauncher.launch(intent)
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+      requestNotificationPermission()
     }
 
     val currentVolume = CurrentUserVolumeView.getCurrentVolume(this)
@@ -318,5 +331,38 @@ class MainActivity : AppCompatActivity() {
   private fun showInfoMenu(): Boolean {
     AboutDialog().show(supportFragmentManager, "about_dialog_box")
     return true
+  }
+
+  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+  private fun requestNotificationPermission() {
+    when {
+      ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+          PackageManager.PERMISSION_GRANTED -> {
+        // Permission is already granted. Continue with the notification setup.
+      }
+      ActivityCompat.shouldShowRequestPermissionRationale(
+          this, Manifest.permission.POST_NOTIFICATIONS) -> {
+        // Show an explanation to the user why the permission is needed.
+        showPermissionRationaleDialog()
+      }
+      else -> {
+        // Directly request the permission.
+        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+      }
+    }
+  }
+
+  @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+  private fun showPermissionRationaleDialog() {
+    val dialog =
+        PermissionMessageDialog(
+            icon = R.drawable.notifications_24, // Replace with your icon resource
+            title = getString(R.string.permission_rationale_title),
+            message = getString(R.string.permission_rationale_message),
+            positiveButtonAction = { dialogFragment ->
+              requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+              dialogFragment.dismiss()
+            })
+    dialog.show(supportFragmentManager, "PermissionMessageDialog")
   }
 }

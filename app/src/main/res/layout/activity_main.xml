@@ -101,17 +101,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="80dp"
                 android:orientation="vertical"
                 android:visibility="visible">
 
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:src="@mipmap/ic_launcher" />
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="8dp" />
+                    app:tint="?attr/colorPrimary"
+                    app:srcCompat="@drawable/ic_launcher_monochrome" />
 
                 <TextView
                     android:layout_width="wrap_content"

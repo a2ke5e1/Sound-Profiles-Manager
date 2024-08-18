@@ -38,4 +38,13 @@
         \n\nThis permission ensures the reliability and accuracy of scheduled sound profile changes.
     </string>
     <string name="sound_profiles">Your Profiles</string>
+    <string name="permission_rationale_title">Send Notification</string>
+    <string name="permission_rationale_message">Notification permission is required to send notifications when a sound profile is applied.</string>
+    <string name="profile_status_notifications">Profile Status Notifications</string>
+    <string name="notifications_for_profile_application">Notifications for profile application</string>
+    <string name="profile_canceled">Profile Canceled</string>
+    <string name="profile_canceled_message">\'%1$s\' profile schedule canceled</string>
+    <string name="profile_scheduled">\'%1$s\' profile scheduled</string>
+    <string name="profile_applied">Profile Applied</string>
+    <string name="profile_applied_message">Profile applied: %1$s</string>
 </resources>

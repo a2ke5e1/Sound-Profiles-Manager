@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.widget.Toast
+import com.a3.soundprofiles.R
 import com.a3.soundprofiles.core.dao.SoundProfileDao
 import com.a3.soundprofiles.core.data.DAY
 import com.a3.soundprofiles.core.data.SoundProfile
@@ -49,7 +50,8 @@ class SoundProfileScheduler(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     alarmManager.setExactAndAllowWhileIdle(
         AlarmManager.RTC_WAKEUP, soundProfile.endTime.time, endPendingIntent)
-    Toast.makeText(context, "'${soundProfile.title}' profile scheduled", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context,
+        context.getString(R.string.profile_scheduled, soundProfile.title), Toast.LENGTH_SHORT).show()
   }
 
   fun cancelScheduledSoundProfileApply(soundProfile: SoundProfile) {
@@ -71,7 +73,8 @@ class SoundProfileScheduler(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     alarmManager.cancel(endPendingIntent)
 
-    Toast.makeText(context, "'${soundProfile.title}' profile schedule canceled", Toast.LENGTH_SHORT)
+    Toast.makeText(context,
+        context.getString(R.string.profile_canceled_message, soundProfile.title), Toast.LENGTH_SHORT)
         .show()
   }
 

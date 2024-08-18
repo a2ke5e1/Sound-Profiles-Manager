@@ -1,12 +1,20 @@
 package com.a3.soundprofiles.core.data
 
+import android.Manifest
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.content.pm.PackageManager
 import android.media.AudioManager
 import android.util.Log
 import androidx.annotation.FloatRange
+import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.a3.soundprofiles.R
 import java.util.Date
 
 enum class DAY {
@@ -72,6 +80,46 @@ data class SoundProfile(
     audioManager.setStreamVolume(AudioManager.STREAM_ALARM, alarmVolume, 0)
     audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, notificationVolume, 0)
 
-    Log.d("SoundProfile", "Profile applied: ${this.title}")
+    sendNotification(
+        context,
+        this.id,
+        context.getString(R.string.profile_applied),
+        context.getString(R.string.profile_applied_message, this.title))
+    Log.d("SoundProfile", context.getString(R.string.profile_applied_message, this.title))
+  }
+
+  companion object {
+    fun sendNotification(context: Context, notificationId: Int, title: String, message: String) {
+      val channelId = "profile_status_channel"
+      val channelName = context.getString(R.string.profile_status_notifications)
+
+      // Create the notification channel if it doesn't exist
+      val importance = NotificationManager.IMPORTANCE_DEFAULT
+      val channel =
+          NotificationChannel(channelId, channelName, importance).apply {
+            description = context.getString(R.string.notifications_for_profile_application)
+          }
+      val notificationManager: NotificationManager =
+          context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+      notificationManager.createNotificationChannel(channel)
+
+      // Build the notification
+      val builder =
+          NotificationCompat.Builder(context, channelId)
+              .setSmallIcon(
+                  R.drawable.ic_launcher_monochrome) // Replace with your notification icon
+              .setContentTitle(title)
+              .setContentText(message)
+              .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+      // Send the notification
+      with(NotificationManagerCompat.from(context)) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !=
+            PackageManager.PERMISSION_GRANTED) {
+          return
+        }
+        notify(notificationId, builder.build())
+      }
+    }
   }
 }
