@@ -13,12 +13,14 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doAfterTextChanged
 import com.a3.soundprofiles.core.data.DAY
+import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.core.main.CreateEditSoundProfileViewModel
 import com.a3.soundprofiles.databinding.ActivitySoundProfileManagerBinding
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipDrawable
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.slider.LabelFormatter
+import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import dagger.hilt.android.AndroidEntryPoint
 import java.text.SimpleDateFormat
@@ -47,11 +49,6 @@ class SoundProfileManager : AppCompatActivity() {
     ViewCompat.setOnApplyWindowInsetsListener(binding.appBarLayout) { v, insets ->
       val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
       v.setPadding(0, systemBars.top, 0, 0)
-      insets
-    }
-    ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-      v.setPadding(0, 0, 0, systemBars.bottom)
       insets
     }
     setSupportActionBar(binding.toolbar)
@@ -112,25 +109,7 @@ class SoundProfileManager : AppCompatActivity() {
         chip.isChecked = soundProfile.repeatDays.contains(day)
         binding.selectDayContainer.addView(chip)
       }
-
-      val timeOnly = soundProfile.repeatEveryday || soundProfile.repeatDays.any()
-      binding.startDatetime.text = soundProfile.startTime.toDateTime(timeOnly)
-      binding.endDatetime.text = soundProfile.endTime.toDateTime(timeOnly)
-
-      binding.startDatetime.setOnClickListener {
-        showDateTimePicker(
-            soundProfile.startTime,
-            { newDate -> createEditSoundProfileViewModel.setStartTime(newDate) },
-            timeOnly)
-      }
-
-      binding.endDatetime.setOnClickListener {
-        showDateTimePicker(
-            soundProfile.endTime,
-            { newDate -> createEditSoundProfileViewModel.setEndTime(newDate) },
-            timeOnly)
-      }
-
+      setUpDateTimeEditor(soundProfile)
       isProgrammaticChange = false
       Log.d("SoundProfileManager", "Sound profile loaded: $soundProfile")
     }
@@ -227,42 +206,6 @@ class SoundProfileManager : AppCompatActivity() {
     return calendar.time
   }
 
-  private fun showDateTimePicker(
-      initialDate: Date,
-      onDateTimeSelected: (Date) -> Unit,
-      timeOnly: Boolean
-  ) {
-    val datePicker = MaterialDatePicker.Builder.datePicker().build()
-
-    val cal = Calendar.getInstance()
-    cal.timeInMillis = if (timeOnly) System.currentTimeMillis() else initialDate.time
-    val initialHour = cal.get(Calendar.HOUR_OF_DAY)
-    val initialMinute = cal.get(Calendar.MINUTE)
-
-    val timePicker =
-        MaterialTimePicker.Builder().setHour(initialHour).setMinute(initialMinute).build().apply {
-          addOnPositiveButtonClickListener {
-            val selectedTime = initialDate.setTime(hour, minute)
-            onDateTimeSelected(selectedTime)
-          }
-        }
-
-    datePicker.addOnPositiveButtonClickListener {
-      val selectedDate = initialDate.setDate(it)
-      timePicker.addOnPositiveButtonClickListener {
-        val selectedDateTime = selectedDate.setTime(timePicker.hour, timePicker.minute)
-        onDateTimeSelected(selectedDateTime)
-      }
-      timePicker.show(supportFragmentManager, "timePicker")
-    }
-
-    if (timeOnly) {
-      timePicker.show(supportFragmentManager, "timePicker")
-    } else {
-      datePicker.show(supportFragmentManager, "datePicker")
-    }
-  }
-
   override fun onOptionsItemSelected(item: MenuItem): Boolean {
     return when (item.itemId) {
       android.R.id.home -> {
@@ -292,6 +235,83 @@ class SoundProfileManager : AppCompatActivity() {
     fun Date.toDateTime(onlyTime: Boolean = false): String {
       val format = if (onlyTime) "HH:mm" else "MMM dd, yyyy HH:mm"
       return SimpleDateFormat(format, Locale.getDefault()).format(this)
+    }
+
+    fun Date.toDateString(): String {
+      val format = "dd/MM/yyyy"
+      return SimpleDateFormat(format, Locale.getDefault()).format(this)
+    }
+
+    fun Date.toTimeString(): String {
+      val format = "HH:mm"
+      return SimpleDateFormat(format, Locale.getDefault()).format(this)
+    }
+  }
+
+  private fun setUpDateTimeEditor(soundProfile: SoundProfile) {
+    val timeOnly = soundProfile.repeatEveryday || soundProfile.repeatDays.any()
+
+    if (timeOnly) {
+      binding.startDateContainer.visibility = View.GONE
+      binding.endDateContainer.visibility = View.GONE
+    } else {
+      binding.startDateContainer.visibility = View.VISIBLE
+      binding.endDateContainer.visibility = View.VISIBLE
+    }
+
+    setDateEditor(
+        binding.startDate, soundProfile.startTime, createEditSoundProfileViewModel::setStartTime)
+    setDateEditor(
+        binding.endDate, soundProfile.endTime, createEditSoundProfileViewModel::setEndTime)
+    setTimeEditor(
+        binding.startTime, soundProfile.startTime, createEditSoundProfileViewModel::setStartTime)
+    setTimeEditor(
+        binding.endTime, soundProfile.endTime, createEditSoundProfileViewModel::setEndTime)
+  }
+
+  private fun setTimeEditor(
+      editText: TextInputEditText,
+      initialDateTime: Date,
+      onDateTimeSelected: (Date) -> Unit
+  ) {
+    editText.setText(initialDateTime.toTimeString())
+    editText.setOnClickListener {
+      val cal = Calendar.getInstance()
+      cal.time = initialDateTime
+
+      val initialHour = cal.get(Calendar.HOUR_OF_DAY)
+      val initialMinute = cal.get(Calendar.MINUTE)
+
+      val timePicker =
+          MaterialTimePicker.Builder().setHour(initialHour).setMinute(initialMinute).build().apply {
+            addOnPositiveButtonClickListener {
+              val selectedTime = initialDateTime.setTime(hour, minute)
+              onDateTimeSelected(selectedTime)
+              editText.setText(selectedTime.toTimeString())
+            }
+          }
+      timePicker.show(supportFragmentManager, "timePicker")
+    }
+  }
+
+  private fun setDateEditor(
+      editText: TextInputEditText,
+      initialDateTime: Date,
+      onDateTimeSelected: (Date) -> Unit
+  ) {
+    editText.setText(initialDateTime.toDateString())
+    val datePicker = MaterialDatePicker.Builder.datePicker().build()
+    editText.setOnClickListener {
+      val cal = Calendar.getInstance()
+      cal.time = initialDateTime
+
+      datePicker.addOnPositiveButtonClickListener {
+        val selectedDate = initialDateTime.setDate(it)
+        onDateTimeSelected(selectedDate)
+        editText.setText(selectedDate.toDateString())
+      }
+
+      datePicker.show(supportFragmentManager, "datePicker")
     }
   }
 }

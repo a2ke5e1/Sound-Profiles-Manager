@@ -32,9 +32,13 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="8dp"
                 android:paddingEnd="8dp"
-                app:constraint_referenced_ids="title_container, description_container,
-                start_datetime_container, end_datetime_container,
-                repeat_day_container, media_slider_container, notification_slider_container, ringer_slider_container, call_slider_container, alarm_slider_container"
+                app:constraint_referenced_ids="
+                title_container,
+                description_container,
+                from_label, start_datetime_container,
+                to_label, end_datetime_container,
+                repeat_day_container,
+                 media_slider_container, notification_slider_container, ringer_slider_container, call_slider_container, alarm_slider_container"
                 app:flow_maxElementsWrap="1"
                 app:flow_verticalGap="8dp"
                 app:flow_verticalStyle="packed"
@@ -218,47 +222,112 @@
 
             </LinearLayout>
 
-            <LinearLayout
+
+            <TextView
+                android:id="@+id/from_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/from"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+
+            <androidx.constraintlayout.helper.widget.Flow
                 android:id="@+id/start_datetime_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                app:constraint_referenced_ids="start_date_container, start_time_container"
+                app:flow_horizontalGap="8dp"
+                app:flow_wrapMode="chain" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/from"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
-                <TextView
-                    android:id="@+id/start_datetime"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/start_date_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:endIconDrawable="@drawable/calendar_month_24"
+                app:endIconMode="custom"
+                app:endIconTint="?attr/colorPrimary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/start_date"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
-                    tools:text="@tools:sample/date/ddmmyy" />
+                    android:layout_height="match_parent"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:inputType="none" />
 
-            </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/start_time_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:endIconDrawable="@drawable/schedule_24"
+                app:endIconMode="custom"
+                app:endIconTint="?attr/colorPrimary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/start_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <TextView
+                android:id="@+id/to_label"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/to"
+                android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+
+
+            <androidx.constraintlayout.helper.widget.Flow
                 android:id="@+id/end_datetime_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                app:constraint_referenced_ids="end_date_container, end_time_container"
+                app:flow_horizontalGap="8dp" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/to"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
 
-                <TextView
-                    android:id="@+id/end_datetime"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/end_date_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:endIconDrawable="@drawable/calendar_month_24"
+                app:endIconMode="custom"
+                app:endIconTint="?attr/colorPrimary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/end_date"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
-                    tools:text="@tools:sample/date/ddmmyy" />
+                    android:layout_height="match_parent"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:inputType="none" />
 
-            </LinearLayout>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/end_time_container"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                app:endIconDrawable="@drawable/schedule_24"
+                app:endIconMode="custom"
+                app:endIconTint="?attr/colorPrimary">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/end_time"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:inputType="none" />
+
+            </com.google.android.material.textfield.TextInputLayout>
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
