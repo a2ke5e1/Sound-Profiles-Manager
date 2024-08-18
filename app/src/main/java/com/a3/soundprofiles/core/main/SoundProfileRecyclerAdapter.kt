@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.selection.ItemDetailsLookup
@@ -20,38 +21,68 @@ import com.a3.soundprofiles.core.SoundProfileScheduler
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.core.di.components.PermissionMessageDialog
 import com.a3.soundprofiles.databinding.CardSoundProfileItemBinding
+import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.imageview.ShapeableImageView
 
 class SoundProfileRecyclerAdapter(
-    val soundProfiles: MutableList<SoundProfile>,
+    val soundProfiles: MutableList<Any>,
     val activity: AppCompatActivity,
     private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>,
     private val toggleIsActive: (soundProfile: SoundProfile) -> Unit
-) : RecyclerView.Adapter<CardSoundProfileItemHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
   var tracker: SelectionTracker<Long>? = null
+
+  companion object {
+    private const val VIEW_TYPE_PROFILE = 0
+    private const val VIEW_TYPE_AD = 1
+  }
 
   init {
     setHasStableIds(true)
   }
 
+  override fun getItemViewType(position: Int): Int {
+    return if (soundProfiles[position] is SoundProfile) VIEW_TYPE_PROFILE else VIEW_TYPE_AD
+  }
+
   // Create new views (invoked by the layout manager)
-  override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): CardSoundProfileItemHolder {
-    // Create a new view, which defines the UI of the list item
-    val inflater = LayoutInflater.from(viewGroup.context)
-    val binding = CardSoundProfileItemBinding.inflate(inflater, viewGroup, false)
-    return CardSoundProfileItemHolder(activity, binding, soundProfileManagerLauncher)
+  override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    return if (viewType == VIEW_TYPE_PROFILE) {
+      val inflater = LayoutInflater.from(viewGroup.context)
+      val binding = CardSoundProfileItemBinding.inflate(inflater, viewGroup, false)
+      CardSoundProfileItemHolder(activity, binding, soundProfileManagerLauncher)
+    } else {
+      val inflater = LayoutInflater.from(viewGroup.context)
+      val view = inflater.inflate(R.layout.unifed_ad_item, viewGroup, false)
+      AdViewHolder(view)
+    }
   }
 
   // Replace the contents of a view (invoked by the layout manager)
-  override fun onBindViewHolder(viewHolder: CardSoundProfileItemHolder, position: Int) {
-    // Get element from your dataset at this position and replace the
-    // contents of the view with that element
-    val soundProfile = soundProfiles[position]
-    viewHolder.bind(soundProfile) {
-      toggleIsActive(it)
-      notifyItemChanged(position)
+  override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
+    if (getItemViewType(position) == VIEW_TYPE_PROFILE) {
+      val soundProfile = soundProfiles[position] as SoundProfile
+      (viewHolder as CardSoundProfileItemHolder).bind(soundProfile) {
+        toggleIsActive(it)
+        notifyItemChanged(position)
+      }
+      tracker?.let { viewHolder.bindSelection(it.isSelected(soundProfile.id.toLong())) }
+    } else {
+      val ad = soundProfiles[position] as NativeAd
+      (viewHolder as AdViewHolder).bind(ad)
     }
-    tracker?.let { viewHolder.bindSelection(it.isSelected(soundProfile.id.toLong())) }
+  }
+
+  fun insertAd(ad: NativeAd) {
+    if (soundProfiles.size > 2) {
+      soundProfiles.add(2, ad)
+    } else {
+      soundProfiles.add(ad)
+    }
+    notifyItemInserted(2)
   }
 
   // Return the size of your dataset (invoked by the layout manager)
@@ -69,13 +100,19 @@ class SoundProfileRecyclerAdapter(
     notifyDataSetChanged()
   }
 
-  override fun getItemId(position: Int): Long = soundProfiles[position].id.toLong()
+  override fun getItemId(position: Int): Long {
+    return if (getItemViewType(position) == VIEW_TYPE_PROFILE) {
+      (soundProfiles[position] as SoundProfile).id.toLong()
+    } else {
+      position.toLong()
+    }
+  }
 
   fun getSelectedSoundProfile(): List<SoundProfile> {
     val selectedProfiles = mutableListOf<SoundProfile>()
     tracker?.let {
       for (soundProfile in soundProfiles) {
-        if (it.isSelected(soundProfile.id.toLong())) {
+        if (soundProfile is SoundProfile && it.isSelected(soundProfile.id.toLong())) {
           selectedProfiles.add(soundProfile)
         }
       }
@@ -86,9 +123,27 @@ class SoundProfileRecyclerAdapter(
   fun selectAll() {
     tracker?.let {
       for (soundProfile in soundProfiles) {
-        it.select(soundProfile.id.toLong())
+        if (soundProfile is SoundProfile) {
+          it.select(soundProfile.id.toLong())
+        }
       }
     }
+  }
+}
+
+class AdViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+  private val adView: NativeAdView = view.findViewById(R.id.native_ad_view)
+
+  fun bind(ad: NativeAd) {
+    adView.headlineView = adView.findViewById<TextView>(R.id.title).apply { text = ad.headline }
+    adView.bodyView = adView.findViewById<TextView>(R.id.description).apply { text = ad.body }
+    adView.iconView =
+        adView.findViewById<ShapeableImageView>(R.id.icon_image).apply {
+          setImageDrawable(ad.icon?.drawable)
+        }
+    adView.callToActionView =
+        adView.findViewById<MaterialButton>(R.id.call_to_action).apply { text = ad.callToAction }
+    adView.setNativeAd(ad)
   }
 }
 
@@ -241,7 +296,12 @@ class SoundProfileItemDetailsLookup(private val recyclerView: RecyclerView) :
   override fun getItemDetails(e: MotionEvent): ItemDetails<Long>? {
     val view = recyclerView.findChildViewUnder(e.x, e.y)
     return if (view != null) {
-      (recyclerView.getChildViewHolder(view) as CardSoundProfileItemHolder).getItemDetails()
+      val viewHolder = recyclerView.getChildViewHolder(view)
+      if (viewHolder is CardSoundProfileItemHolder) {
+        viewHolder.getItemDetails()
+      } else {
+        null
+      }
     } else {
       null
     }

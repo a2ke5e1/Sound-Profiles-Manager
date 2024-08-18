@@ -108,8 +108,8 @@
                 <com.google.android.material.imageview.ShapeableImageView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:tint="?attr/colorPrimary"
-                    app:srcCompat="@drawable/ic_launcher_monochrome" />
+                    app:srcCompat="@drawable/ic_launcher_monochrome"
+                    app:tint="?attr/colorPrimary" />
 
                 <TextView
                     android:layout_width="wrap_content"

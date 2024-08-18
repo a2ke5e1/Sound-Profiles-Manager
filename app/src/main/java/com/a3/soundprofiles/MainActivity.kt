@@ -34,6 +34,13 @@ import com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
 import com.a3.soundprofiles.core.ui.dialogbox.AboutDialog
 import com.a3.soundprofiles.core.ui.dialogbox.AboutDialog.Companion.shareApp
 import com.a3.soundprofiles.databinding.ActivityMainBinding
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdLoader
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.LoadAdError
+import com.google.android.gms.ads.MobileAds
+import com.google.android.gms.ads.nativead.NativeAd
+import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.material.color.DynamicColors
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -66,7 +73,10 @@ class MainActivity : AppCompatActivity() {
    */
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
+
     installSplashScreen()
+    MobileAds.initialize(this) {}
+
     DynamicColors.applyToActivityIfAvailable(this)
     binding = ActivityMainBinding.inflate(layoutInflater)
     enableEdgeToEdge()
@@ -76,6 +86,7 @@ class MainActivity : AppCompatActivity() {
     mainViewModel.loadAllSoundProfiles()
     setupRecyclerView()
     observeViewModel()
+    // setUpAds()
     binding.fab.setOnClickListener {
       val intent = SoundProfileManager.createIntent(this)
       soundProfileManagerLauncher.launch(intent)
@@ -202,6 +213,7 @@ class MainActivity : AppCompatActivity() {
     val adapter = binding.recyclerView.adapter as SoundProfileRecyclerAdapter
     adapter.updateSoundProfiles(soundProfiles)
     setupSelectionTracker(adapter)
+    setUpAds(soundProfiles)
   }
 
   /**
@@ -365,4 +377,58 @@ class MainActivity : AppCompatActivity() {
             })
     dialog.show(supportFragmentManager, "PermissionMessageDialog")
   }
+
+  lateinit var adLoader: AdLoader
+
+  private fun setUpAds(soundProfiles: List<SoundProfile>) {
+    adLoader =
+        AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
+            .forNativeAd { ad: NativeAd ->
+              if (!adLoader.isLoading) {
+                val adapter = binding.recyclerView.adapter as SoundProfileRecyclerAdapter
+                adapter.insertAd(ad)
+              }
+              if (isDestroyed) {
+                ad.destroy()
+                return@forNativeAd
+              }
+            }
+            .withAdListener(
+                object : AdListener() {
+                  override fun onAdFailedToLoad(adError: LoadAdError) {}
+                })
+            .withNativeAdOptions(
+                NativeAdOptions.Builder()
+                    .setAdChoicesPlacement(NativeAdOptions.ADCHOICES_TOP_RIGHT)
+                    .build())
+            .build()
+
+    adLoader.loadAd(AdRequest.Builder().build())
+  }
+
+  /*
+  private fun displayNativeAd(parent: LinearLayout, ad: NativeAd) {
+    val view = LayoutInflater.from(this).inflate(R.layout.unifed_ad_item, parent, false)
+    val adView = view.findViewById<NativeAdView>(R.id.native_ad_view)
+
+    val headlineView = adView.findViewById<TextView>(R.id.title)
+    headlineView.text = ad.headline
+    adView.headlineView = headlineView
+
+    val bodyView = adView.findViewById<TextView>(R.id.description)
+    bodyView.text = ad.body
+    adView.bodyView = bodyView
+
+    val iconView = adView.findViewById<ShapeableImageView>(R.id.icon_image)
+    iconView.setImageDrawable(ad.icon?.drawable)
+    adView.iconView = iconView
+
+    val callToAction = adView.findViewById<MaterialButton>(R.id.call_to_action)
+    callToAction.text = ad.callToAction
+    adView.callToActionView = callToAction
+
+    adView.setNativeAd(ad)
+    parent.removeAllViews()
+    parent.addView(adView)
+  }*/
 }

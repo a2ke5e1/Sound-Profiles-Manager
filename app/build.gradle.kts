@@ -47,6 +47,7 @@ dependencies {
   implementation(libs.androidx.lifecycle.livedata.ktx)
   implementation(libs.androidx.recyclerview.selection)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.play.services.ads)
     annotationProcessor(libs.androidx.room.compiler)
   ksp(libs.androidx.room.compiler)
   implementation(libs.androidx.room.ktx)
