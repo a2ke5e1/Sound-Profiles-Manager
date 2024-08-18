@@ -107,7 +107,7 @@ data class SoundProfile(
       val builder =
           NotificationCompat.Builder(context, channelId)
               .setSmallIcon(
-                  R.drawable.ic_launcher_monochrome) // Replace with your notification icon
+                  R.drawable.app_notification_icon) // Replace with your notification icon
               .setContentTitle(title)
               .setContentText(message)
               .setPriority(NotificationCompat.PRIORITY_DEFAULT)
