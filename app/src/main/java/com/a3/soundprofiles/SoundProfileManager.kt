@@ -115,18 +115,23 @@ class SoundProfileManager : AppCompatActivity() {
     }
 
     binding.ringerVolume.addOnChangeListener { _, value, _ ->
+      if (isProgrammaticChange) return@addOnChangeListener
       createEditSoundProfileViewModel.setRingerVolume(value)
     }
     binding.mediaVolume.addOnChangeListener { _, value, _ ->
+      if (isProgrammaticChange) return@addOnChangeListener
       createEditSoundProfileViewModel.setMediaVolume(value)
     }
     binding.notificationVolume.addOnChangeListener { _, value, _ ->
+      if (isProgrammaticChange) return@addOnChangeListener
       createEditSoundProfileViewModel.setNotificationVolume(value)
     }
     binding.callVolume.addOnChangeListener { _, value, _ ->
+      if (isProgrammaticChange) return@addOnChangeListener
       createEditSoundProfileViewModel.setCallVolume(value)
     }
     binding.alarmVolume.addOnChangeListener { _, value, _ ->
+      if (isProgrammaticChange) return@addOnChangeListener
       createEditSoundProfileViewModel.setAlarmVolume(value)
     }
 
