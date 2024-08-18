@@ -26,6 +26,14 @@ import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.imageview.ShapeableImageView
 
+/**
+ * Adapter class for managing sound profiles and ads in a RecyclerView.
+ *
+ * @property soundProfiles List of sound profiles and ads to be displayed.
+ * @property activity The activity context.
+ * @property soundProfileManagerLauncher Launcher for starting activities for result.
+ * @property toggleIsActive Callback to toggle the active state of a sound profile.
+ */
 class SoundProfileRecyclerAdapter(
     val soundProfiles: MutableList<Any>,
     val activity: AppCompatActivity,
@@ -76,6 +84,11 @@ class SoundProfileRecyclerAdapter(
     }
   }
 
+  /**
+   * Inserts an ad at the specified position in the list.
+   *
+   * @param ad The ad to be inserted.
+   */
   fun insertAd(ad: NativeAd) {
     if (soundProfiles.size > 2) {
       soundProfiles.add(2, ad)
@@ -88,12 +101,21 @@ class SoundProfileRecyclerAdapter(
   // Return the size of your dataset (invoked by the layout manager)
   override fun getItemCount() = soundProfiles.size
 
+  /**
+   * Adds a new sound profile to the list.
+   *
+   * @param soundProfile The sound profile to be added.
+   */
   fun addSoundProfile(soundProfile: SoundProfile) {
     soundProfiles.add(soundProfile)
     notifyItemInserted(soundProfiles.size - 1)
   }
 
-  // Optionally, a method to update the entire list
+  /**
+   * Updates the list of sound profiles.
+   *
+   * @param newSoundProfiles The new list of sound profiles.
+   */
   fun updateSoundProfiles(newSoundProfiles: List<SoundProfile>) {
     soundProfiles.clear()
     soundProfiles.addAll(newSoundProfiles)
@@ -104,10 +126,16 @@ class SoundProfileRecyclerAdapter(
     return if (getItemViewType(position) == VIEW_TYPE_PROFILE) {
       (soundProfiles[position] as SoundProfile).id.toLong()
     } else {
-      position.toLong()
+      -1L // No sound profile will have an id of -1 so this is safe as long as we are only injecting
+      // one ad
     }
   }
 
+  /**
+   * Retrieves the list of selected sound profiles.
+   *
+   * @return List of selected sound profiles.
+   */
   fun getSelectedSoundProfile(): List<SoundProfile> {
     val selectedProfiles = mutableListOf<SoundProfile>()
     tracker?.let {
@@ -120,6 +148,7 @@ class SoundProfileRecyclerAdapter(
     return selectedProfiles
   }
 
+  /** Selects all sound profiles in the list. */
   fun selectAll() {
     tracker?.let {
       for (soundProfile in soundProfiles) {
@@ -131,9 +160,19 @@ class SoundProfileRecyclerAdapter(
   }
 }
 
+/**
+ * ViewHolder class for displaying ads.
+ *
+ * @param view The view to be used for displaying the ad.
+ */
 class AdViewHolder(view: View) : RecyclerView.ViewHolder(view) {
   private val adView: NativeAdView = view.findViewById(R.id.native_ad_view)
 
+  /**
+   * Binds the ad data to the view.
+   *
+   * @param ad The ad to be displayed.
+   */
   fun bind(ad: NativeAd) {
     adView.headlineView = adView.findViewById<TextView>(R.id.title).apply { text = ad.headline }
     adView.bodyView = adView.findViewById<TextView>(R.id.description).apply { text = ad.body }
@@ -147,12 +186,25 @@ class AdViewHolder(view: View) : RecyclerView.ViewHolder(view) {
   }
 }
 
+/**
+ * ViewHolder class for displaying sound profiles.
+ *
+ * @param activity The activity context.
+ * @param binding The binding for the sound profile item view.
+ * @param soundProfileManagerLauncher Launcher for starting activities for result.
+ */
 class CardSoundProfileItemHolder(
     val activity: AppCompatActivity,
     val binding: CardSoundProfileItemBinding,
     private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>,
 ) : RecyclerView.ViewHolder(binding.root) {
 
+  /**
+   * Binds the sound profile data to the view.
+   *
+   * @param soundProfile The sound profile to be displayed.
+   * @param toggleIsActive Callback to toggle the active state of the sound profile.
+   */
   fun bind(soundProfile: SoundProfile, toggleIsActive: (soundProfile: SoundProfile) -> Unit) {
     val context = binding.root.context
 
@@ -201,6 +253,11 @@ class CardSoundProfileItemHolder(
     }
   }
 
+  /**
+   * Handles the exact alarm permission for scheduling sound profiles.
+   *
+   * @return True if the permission is granted, false otherwise.
+   */
   private fun handleExactAlarmPermission(): Boolean {
     val context = binding.root.context
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
@@ -228,11 +285,21 @@ class CardSoundProfileItemHolder(
     return true
   }
 
+  /**
+   * Binds the selection state to the view.
+   *
+   * @param isSelected True if the item is selected, false otherwise.
+   */
   fun bindSelection(isSelected: Boolean) {
     itemView.isActivated = isSelected
     binding.selectionIndicator.visibility = if (isSelected) View.VISIBLE else View.GONE
   }
 
+  /**
+   * Retrieves the item details for selection.
+   *
+   * @return The item details.
+   */
   fun getItemDetails(): ItemDetailsLookup.ItemDetails<Long> =
       object : ItemDetailsLookup.ItemDetails<Long>() {
         override fun getPosition(): Int = bindingAdapterPosition
@@ -240,6 +307,12 @@ class CardSoundProfileItemHolder(
         override fun getSelectionKey(): Long = itemId
       }
 
+  /**
+   * Formats the date information for the sound profile.
+   *
+   * @param soundProfile The sound profile.
+   * @return The formatted date information.
+   */
   private fun formatDateInfo(soundProfile: SoundProfile): String {
     return " · " +
         if (soundProfile.repeatEveryday) {
@@ -252,12 +325,23 @@ class CardSoundProfileItemHolder(
   }
 
   companion object {
+    /**
+     * Converts the volume to a string representation.
+     *
+     * @param volume The volume level.
+     * @return The string representation of the volume.
+     */
     fun volumeToString(volume: Float): String {
       return "${(volume * 100).toInt()}%"
     }
   }
 }
 
+/**
+ * Item decoration class for adding space between items in a RecyclerView.
+ *
+ * @param spaceHeight The height of the space to be added.
+ */
 class SpaceBetweenItemDecorator(private val spaceHeight: Int) : RecyclerView.ItemDecoration() {
   override fun getItemOffsets(
       outRect: Rect,
@@ -278,6 +362,11 @@ class SpaceBetweenItemDecorator(private val spaceHeight: Int) : RecyclerView.Ite
   }
 }
 
+/**
+ * Key provider class for retrieving item keys in a RecyclerView.
+ *
+ * @param recyclerView The RecyclerView instance.
+ */
 class SoundProfileItemKeyProvider(private val recyclerView: RecyclerView) :
     ItemKeyProvider<Long>(SCOPE_MAPPED) {
 
@@ -291,19 +380,22 @@ class SoundProfileItemKeyProvider(private val recyclerView: RecyclerView) :
   }
 }
 
+/**
+ * Item details lookup class for retrieving item details in a RecyclerView.
+ *
+ * @param recyclerView The RecyclerView instance.
+ */
 class SoundProfileItemDetailsLookup(private val recyclerView: RecyclerView) :
     ItemDetailsLookup<Long>() {
   override fun getItemDetails(e: MotionEvent): ItemDetails<Long>? {
     val view = recyclerView.findChildViewUnder(e.x, e.y)
-    return if (view != null) {
-      val viewHolder = recyclerView.getChildViewHolder(view)
-      if (viewHolder is CardSoundProfileItemHolder) {
-        viewHolder.getItemDetails()
-      } else {
-        null
-      }
-    } else {
-      null
+    if (view == null) {
+      return null
     }
+    val viewHolder = recyclerView.getChildViewHolder(view)
+    if (viewHolder !is CardSoundProfileItemHolder) {
+      return null
+    }
+    return viewHolder.getItemDetails()
   }
 }

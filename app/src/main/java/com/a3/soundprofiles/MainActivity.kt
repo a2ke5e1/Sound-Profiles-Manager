@@ -86,6 +86,7 @@ class MainActivity : AppCompatActivity() {
     mainViewModel.loadAllSoundProfiles()
     setupRecyclerView()
     observeViewModel()
+    setUpAds()
     // setUpAds()
     binding.fab.setOnClickListener {
       val intent = SoundProfileManager.createIntent(this)
@@ -213,7 +214,6 @@ class MainActivity : AppCompatActivity() {
     val adapter = binding.recyclerView.adapter as SoundProfileRecyclerAdapter
     adapter.updateSoundProfiles(soundProfiles)
     setupSelectionTracker(adapter)
-    setUpAds(soundProfiles)
   }
 
   /**
@@ -380,13 +380,21 @@ class MainActivity : AppCompatActivity() {
 
   lateinit var adLoader: AdLoader
 
-  private fun setUpAds(soundProfiles: List<SoundProfile>) {
+  private fun setUpAds() {
     adLoader =
         AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
             .forNativeAd { ad: NativeAd ->
               if (!adLoader.isLoading) {
-                val adapter = binding.recyclerView.adapter as SoundProfileRecyclerAdapter
-                adapter.insertAd(ad)
+
+                mainViewModel.state.observe(this) { state ->
+                  when (state) {
+                    is MainState.Success -> {
+                      val adapter = binding.recyclerView.adapter as SoundProfileRecyclerAdapter
+                      adapter.insertAd(ad)
+                    }
+                    else -> {}
+                  }
+                }
               }
               if (isDestroyed) {
                 ad.destroy()
@@ -405,30 +413,4 @@ class MainActivity : AppCompatActivity() {
 
     adLoader.loadAd(AdRequest.Builder().build())
   }
-
-  /*
-  private fun displayNativeAd(parent: LinearLayout, ad: NativeAd) {
-    val view = LayoutInflater.from(this).inflate(R.layout.unifed_ad_item, parent, false)
-    val adView = view.findViewById<NativeAdView>(R.id.native_ad_view)
-
-    val headlineView = adView.findViewById<TextView>(R.id.title)
-    headlineView.text = ad.headline
-    adView.headlineView = headlineView
-
-    val bodyView = adView.findViewById<TextView>(R.id.description)
-    bodyView.text = ad.body
-    adView.bodyView = bodyView
-
-    val iconView = adView.findViewById<ShapeableImageView>(R.id.icon_image)
-    iconView.setImageDrawable(ad.icon?.drawable)
-    adView.iconView = iconView
-
-    val callToAction = adView.findViewById<MaterialButton>(R.id.call_to_action)
-    callToAction.text = ad.callToAction
-    adView.callToActionView = callToAction
-
-    adView.setNativeAd(ad)
-    parent.removeAllViews()
-    parent.addView(adView)
-  }*/
 }
