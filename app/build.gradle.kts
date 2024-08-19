@@ -3,7 +3,8 @@ plugins {
   alias(libs.plugins.jetbrains.kotlin.android)
   alias(libs.plugins.com.google.devtools.ksp)
   alias(libs.plugins.com.google.dagger.hilt.android)
-    alias(libs.plugins.com.google.firebase.crashlytics)
+  alias(libs.plugins.com.google.gms.google.services)
+  alias(libs.plugins.com.google.firebase.crashlytics)
 }
 
 android {
@@ -14,8 +15,8 @@ android {
     applicationId = "com.a3.soundprofiles"
     minSdk = 29
     targetSdk = 34
-    versionCode = 2
-    versionName = "0.0.1-alpha"
+    versionCode = 3
+    versionName = "0.0.${versionCode}-alpha"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

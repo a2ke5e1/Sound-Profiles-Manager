@@ -144,18 +144,6 @@ class MainActivity : AppCompatActivity() {
       setIcon(R.drawable.call_24)
       addOnChangeListener(AudioManager.STREAM_VOICE_CALL)
     }
-
-    this.onBackPressedDispatcher.addCallback(
-        this,
-        object : OnBackPressedCallback(true) {
-          override fun handleOnBackPressed() {
-            if (tracker.hasSelection()) {
-              tracker.clearSelection()
-            } else {
-              finish()
-            }
-          }
-        })
   }
 
   override fun onResume() {
@@ -241,6 +229,23 @@ class MainActivity : AppCompatActivity() {
     val adapter = binding.recyclerView.adapter as SoundProfileRecyclerAdapter
     adapter.updateSoundProfiles(soundProfiles)
     setupSelectionTracker(adapter)
+
+    // Set up the back button to clear the selection if there is one.
+    // This makes the back button act as a cancel button when a selection is active.
+
+    // Add a callback to the OnBackPressedDispatcher to handle the back button press
+    // only when tracker has been initialized.
+    this.onBackPressedDispatcher.addCallback(
+        this,
+        object : OnBackPressedCallback(true) {
+          override fun handleOnBackPressed() {
+            if (tracker.hasSelection()) {
+              tracker.clearSelection()
+            } else {
+              finish()
+            }
+          }
+        })
   }
 
   /**
