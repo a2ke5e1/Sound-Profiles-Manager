@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import android.util.Log
 import android.widget.Toast
 import com.a3.soundprofiles.R
 import com.a3.soundprofiles.core.dao.SoundProfileDao
@@ -50,8 +51,16 @@ class SoundProfileScheduler(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     alarmManager.setExactAndAllowWhileIdle(
         AlarmManager.RTC_WAKEUP, soundProfile.endTime.time, endPendingIntent)
-    Toast.makeText(context,
-        context.getString(R.string.profile_scheduled, soundProfile.title), Toast.LENGTH_SHORT).show()
+
+    try {
+      Toast.makeText(
+              context,
+              context.getString(R.string.profile_scheduled, soundProfile.title),
+              Toast.LENGTH_SHORT)
+          .show()
+    } catch (ex: NullPointerException) {
+      Log.i("SoundProfileScheduler", "Maybe in background\n${ex.printStackTrace()}")
+    }
   }
 
   fun cancelScheduledSoundProfileApply(soundProfile: SoundProfile) {
@@ -73,9 +82,15 @@ class SoundProfileScheduler(private val context: Context) {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
     alarmManager.cancel(endPendingIntent)
 
-    Toast.makeText(context,
-        context.getString(R.string.profile_canceled_message, soundProfile.title), Toast.LENGTH_SHORT)
-        .show()
+    try {
+      Toast.makeText(
+              context,
+              context.getString(R.string.profile_canceled_message, soundProfile.title),
+              Toast.LENGTH_SHORT)
+          .show()
+    } catch (ex: NullPointerException) {
+      Log.i("SoundProfileScheduler", "Maybe in background\n${ex.printStackTrace()}")
+    }
   }
 
   fun rescheduleSoundProfile(
