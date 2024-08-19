@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Sound Profiles</string>
+    <string name="app_name">Sound Profile Scheduler</string>
     <string name="save_sound_profile">Save Sound Profile</string>
     <string name="title">Title</string>
     <string name="description">Description</string>
@@ -47,4 +47,6 @@
     <string name="profile_scheduled">\'%1$s\' profile scheduled</string>
     <string name="profile_applied">Profile Applied</string>
     <string name="profile_applied_message">Profile applied: %1$s</string>
+    <string name="by_continuing_you_agree_our_terms_of_service_and_privacy_policy">By continuing, you agree our Terms of Service and Privacy Policy.</string>
+    <string name="start">Start</string>
 </resources>

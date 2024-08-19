@@ -179,6 +179,7 @@ class AdViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     adView.iconView =
         adView.findViewById<ShapeableImageView>(R.id.icon_image).apply {
           setImageDrawable(ad.icon?.drawable)
+          visibility = if (ad.icon == null) View.GONE else View.VISIBLE
         }
     adView.callToActionView =
         adView.findViewById<MaterialButton>(R.id.call_to_action).apply { text = ad.callToAction }

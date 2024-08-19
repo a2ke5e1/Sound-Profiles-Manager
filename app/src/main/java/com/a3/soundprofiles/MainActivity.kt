@@ -27,6 +27,8 @@ import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.a3.soundprofiles.WelcomeScreen.Companion.FIRST_LAUNCH
+import com.a3.soundprofiles.WelcomeScreen.Companion.GLOBAL_APP_PREF
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.core.di.components.PermissionMessageDialog
 import com.a3.soundprofiles.core.main.*
@@ -42,7 +44,12 @@ import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdOptions
 import com.google.android.material.color.DynamicColors
+import com.google.android.ump.ConsentForm
+import com.google.android.ump.ConsentInformation
+import com.google.android.ump.ConsentRequestParameters
+import com.google.android.ump.UserMessagingPlatform
 import dagger.hilt.android.AndroidEntryPoint
+import kotlin.concurrent.thread
 
 /**
  * MainActivity is the entry point of the application, responsible for displaying and managing sound
@@ -54,6 +61,8 @@ class MainActivity : AppCompatActivity() {
   private val mainViewModel: MainViewModel by viewModels()
   private lateinit var tracker: SelectionTracker<Long>
   private lateinit var binding: ActivityMainBinding
+  private var consentForm: ConsentForm? = null
+  private lateinit var consentInformation: ConsentInformation
 
   private val soundProfileManagerLauncher: ActivityResultLauncher<Intent> =
       registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -73,13 +82,27 @@ class MainActivity : AppCompatActivity() {
    */
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-
     installSplashScreen()
+    enableEdgeToEdge()
     MobileAds.initialize(this) {}
 
     DynamicColors.applyToActivityIfAvailable(this)
+
+    val pref = this.getSharedPreferences(GLOBAL_APP_PREF, MODE_PRIVATE)
+    val firstLaunch = pref.getBoolean(FIRST_LAUNCH, true)
+
+    /*
+     *
+     *  Checks if user is agreed to terms and conditions and privacy policy.
+     *
+     * */
+    if (firstLaunch) {
+      startActivity(Intent(this, WelcomeScreen::class.java))
+      finish()
+    }
+    thread { loadEUForm() }
+
     binding = ActivityMainBinding.inflate(layoutInflater)
-    enableEdgeToEdge()
     setContentView(binding.root)
     setupWindowInsets()
     setSupportActionBar(binding.toolbar)
@@ -87,7 +110,6 @@ class MainActivity : AppCompatActivity() {
     setupRecyclerView()
     observeViewModel()
     setUpAds()
-    // setUpAds()
     binding.fab.setOnClickListener {
       val intent = SoundProfileManager.createIntent(this)
       soundProfileManagerLauncher.launch(intent)
@@ -153,6 +175,11 @@ class MainActivity : AppCompatActivity() {
     ViewCompat.setOnApplyWindowInsetsListener(binding.appBarLayout) { v, insets ->
       val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
       v.setPadding(0, systemBars.top, 0, 0)
+      insets
+    }
+    ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+      v.setPadding(0, 0, 0, systemBars.bottom)
       insets
     }
   }
@@ -382,7 +409,7 @@ class MainActivity : AppCompatActivity() {
 
   private fun setUpAds() {
     adLoader =
-        AdLoader.Builder(this, "ca-app-pub-3940256099942544/2247696110")
+        AdLoader.Builder(this, getString(R.string.admob_native_ad_unit_id))
             .forNativeAd { ad: NativeAd ->
               if (!adLoader.isLoading) {
 
@@ -412,5 +439,37 @@ class MainActivity : AppCompatActivity() {
             .build()
 
     adLoader.loadAd(AdRequest.Builder().build())
+  }
+
+  private fun loadEUForm() {
+
+    val params =
+        ConsentRequestParameters.Builder()
+            .setTagForUnderAgeOfConsent(false)
+            // .setConsentDebugSettings(debugSettings)
+            .build()
+    consentInformation = UserMessagingPlatform.getConsentInformation(this)
+    consentInformation.requestConsentInfoUpdate(
+        this,
+        params,
+        {
+          if (consentInformation.isConsentFormAvailable) {
+            loadForm()
+          }
+        },
+        {})
+  }
+
+  private fun loadForm() {
+    UserMessagingPlatform.loadConsentForm(
+        this,
+        { consentForm ->
+          this.consentForm = consentForm
+          if (consentInformation.consentStatus == ConsentInformation.ConsentStatus.REQUIRED) {
+            consentForm.show(this) { // Handle dismissal by reloading form.
+              loadForm()
+            }
+          }
+        }) {}
   }
 }

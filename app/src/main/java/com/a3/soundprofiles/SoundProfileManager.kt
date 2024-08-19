@@ -51,6 +51,11 @@ class SoundProfileManager : AppCompatActivity() {
       v.setPadding(0, systemBars.top, 0, 0)
       insets
     }
+    ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
+      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+      v.setPadding(0, 0, 0, systemBars.bottom)
+      insets
+    }
     setSupportActionBar(binding.toolbar)
     supportActionBar?.setDisplayHomeAsUpEnabled(true)
     binding.toolbar.title = getString(R.string.create_sound_profile)

@@ -31,11 +31,9 @@
                     android:id="@+id/icon_image"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
+                    android:layout_marginRight="8dp"
                     android:layout_gravity="center_vertical" />
 
-                <Space
-                    android:layout_width="8dp"
-                    android:layout_height="0dp" />
 
 
                 <LinearLayout
@@ -49,7 +47,7 @@
                         android:id="@+id/title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                        android:textAppearance="@style/TextAppearance.Material3.BodyLarge"
                         android:textColor="?attr/colorPrimary"
                         tools:text="Sound Profile Name" />
 
