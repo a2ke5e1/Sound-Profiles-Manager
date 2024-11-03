@@ -34,37 +34,13 @@
                 android:padding="8dp">
 
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.imageview.ShapeableImageView
-                        android:layout_width="18dp"
-                        android:layout_height="match_parent"
-                        app:tint="?attr/colorTertiary"
-                        app:srcCompat="@drawable/calendar_month_24" />
-
-                    <TextView
-                        android:id="@+id/date_range"
-                        android:layout_width="wrap_content"
+                <TextView
+                        android:id="@+id/default_indicator"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="2dp"
                         android:textColor="?attr/colorTertiary"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                        tools:text="Aug 12, 2024 10:00 - Aug 13, 2024 13:00" />
+                        android:text="@string/default_indicator" />
 
-                    <TextView
-                        android:id="@+id/date_info"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="2dp"
-                        android:textColor="?attr/colorTertiary"
-                        android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
-                        tools:text=" · Mo Tu Th" />
-
-
-                </LinearLayout>
 
                 <TextView
                     android:id="@+id/title"
@@ -81,10 +57,44 @@
                     android:layout_width="match_parent"
                     android:layout_marginTop="-4dp"
                     android:layout_marginStart="2dp"
+                        android:visibility="gone"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                     tools:text="Sound Profile Name" />
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal">
+
+                    <com.google.android.material.imageview.ShapeableImageView
+                            android:layout_width="18dp"
+                            android:layout_height="match_parent"
+                            app:tint="?attr/colorOnSecondaryContainer"
+                            app:srcCompat="@drawable/calendar_month_24" />
+
+                    <TextView
+                            android:id="@+id/date_range"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:textColor="?attr/colorOnSecondaryContainer"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                            tools:text="Aug 12, 2024 10:00 - Aug 13, 2024 13:00" />
+
+                    <TextView
+                            android:id="@+id/date_info"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="2dp"
+                            android:textColor="?attr/colorOnSecondaryContainer"
+                            android:textAppearance="@style/TextAppearance.Material3.LabelSmall"
+                            tools:text=" · Mo Tu Th" />
+
+
+                </LinearLayout>
 
 
                 <HorizontalScrollView

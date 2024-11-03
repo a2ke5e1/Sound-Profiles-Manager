@@ -1,5 +1,5 @@
 [versions]
-agp = "8.5.2"
+agp = "8.6.0"
 kotlin = "2.0.10"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -20,6 +20,7 @@ playServicesAds = "23.3.0"
 firebaseCrashlytics = "19.0.3"
 firebaseCrashlyticsPlugin = "3.0.2"
 playServices = "4.4.2"
+preferenceKtx = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -41,6 +42,7 @@ androidx-recyclerview-selection = { group = "androidx.recyclerview", name = "rec
 androidx-core-splashscreen = { group = "androidx.core", name = "core-splashscreen", version.ref = "coreSplashscreen" }
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "playServicesAds" }
 firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version.ref = "firebaseCrashlytics" }
+androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "preferenceKtx" }
 
 
 [plugins]

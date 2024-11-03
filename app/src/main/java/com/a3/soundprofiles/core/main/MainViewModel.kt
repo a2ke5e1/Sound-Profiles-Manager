@@ -1,15 +1,18 @@
 package com.a3.soundprofiles.core.main
 
+import android.content.Context
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.preference.PreferenceManager
+import com.a3.soundprofiles.R
 import com.a3.soundprofiles.core.dao.SoundProfileDao
 import com.a3.soundprofiles.core.data.SoundProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed class MainState {
   object Loading : MainState()
@@ -69,5 +72,20 @@ class MainViewModel @Inject constructor(val soundProfileDao: SoundProfileDao) : 
     val soundProfiles = soundProfileDao.getAll()
     if (soundProfiles.isEmpty()) _state.postValue(MainState.Empty)
     else _state.postValue(MainState.Success(soundProfiles))
+  }
+
+  fun setDefaultSoundProfile(context: Context, id: Int) {
+    val pref = PreferenceManager.getDefaultSharedPreferences(context)
+    val DEFAULT_PROFILE_ID = context.getString(R.string.default_sound_profile_pref)
+    val editor = pref.edit()
+
+    viewModelScope.launch(Dispatchers.IO) {
+      val soundProfile = soundProfileDao.getById(id)
+      editor.putInt(DEFAULT_PROFILE_ID, id)
+      editor.commit()
+      launch(Dispatchers.Main) {
+        Toast.makeText(context, "Default Set: ${soundProfile.title}", Toast.LENGTH_SHORT).show()
+      }
+    }
   }
 }
