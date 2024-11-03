@@ -17,9 +17,6 @@ import com.a3.soundprofiles.BuildConfig
 import com.a3.soundprofiles.R
 import com.a3.soundprofiles.databinding.DialogAboutBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import java.lang.IllegalStateException
-import kotlin.let
-import kotlin.text.trimIndent
 
 data class Credits(val username: String, val language: String) {
   fun getClickableCredit(): SpannableString {
@@ -52,6 +49,13 @@ class AboutDialog : DialogFragment() {
       }
       binding.translationCredit.text = creditsText
       binding.translationCredit.movementMethod = LinkMovementMethod.getInstance()
+
+        val githubLink = SpannableString("Source code available on GitHub")
+        val urlSpan = URLSpan("https://github.com/a2ke5e1/Sound-Profiles-Manager")
+        githubLink.setSpan(urlSpan, 0, githubLink.length, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+
+        binding.sourceCode.text = githubLink
+        binding.sourceCode.movementMethod = LinkMovementMethod.getInstance()
 
       binding.telegramLink.setOnClickListener {
         val url = "https://t.me/phycalc"

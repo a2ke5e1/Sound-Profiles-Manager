@@ -282,6 +282,7 @@ class MainActivity : AppCompatActivity() {
         title = getString(R.string.selected, tracker.selection.size())
         inflateMenu(R.menu.profiles_selected_menu)
         menu.findItem(R.id.action_edit).isVisible = tracker.selection.size() == 1
+        menu.findItem(R.id.action_make_default).isVisible = tracker.selection.size() == 1
         supportActionBar?.setHomeAsUpIndicator(R.drawable.close_24)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         setOnMenuItemClickListener { handleMenuItemClick(it) }
@@ -304,6 +305,12 @@ class MainActivity : AppCompatActivity() {
       R.id.action_edit -> {
         val intent = SoundProfileManager.createIntent(this, tracker.selection.first().toInt())
         soundProfileManagerLauncher.launch(intent)
+        tracker.clearSelection()
+        true
+      }
+      R.id.action_make_default -> {
+        mainViewModel.setDefaultSoundProfile(this, tracker.selection.first().toInt())
+        (binding.recyclerView.adapter as SoundProfileRecyclerAdapter).notifyDataSetChanged()
         tracker.clearSelection()
         true
       }

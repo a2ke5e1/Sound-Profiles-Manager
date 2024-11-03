@@ -206,8 +206,6 @@ class CardSoundProfileItemHolder(
   private val pref = PreferenceManager.getDefaultSharedPreferences(activity)
   private val editor = pref.edit()
   private val DEFAULT_PROFILE_ID = activity.getString(R.string.default_sound_profile_pref)
-  private val currentDefaultProfileId = pref.getInt(DEFAULT_PROFILE_ID, -1)
-
   /**
    * Binds the sound profile data to the view.
    *
@@ -246,6 +244,7 @@ class CardSoundProfileItemHolder(
       binding.scheduleBtn.text = context.getString(R.string.schedule)
     }
 
+    val currentDefaultProfileId = pref.getInt(DEFAULT_PROFILE_ID, -1)
     binding.defaultIndicator.visibility = if (soundProfile.id == currentDefaultProfileId) {
       View.VISIBLE
     } else {
@@ -266,42 +265,6 @@ class CardSoundProfileItemHolder(
       }
       toggleIsActive(soundProfile)
     }
-
-    binding.root.setOnLongClickListener {
-      makeDefaultProfilePopup(soundProfile)
-      true
-    }
-  }
-
-  /**
-   * Creates a popup menu for setting the default sound profile.
-   *
-   * @param soundProfile The sound profile to be set as default.
-   */
-  private fun makeDefaultProfilePopup(soundProfile: SoundProfile) {
-    val context = binding.root.context
-    val menuRes = R.menu.context_menu_sound_profile
-    val popup = PopupMenu(context, binding.root)
-    popup.menuInflater.inflate(menuRes, popup.menu)
-
-    popup.setOnMenuItemClickListener { menuItem: MenuItem ->
-      // Respond to menu item click.
-      when (menuItem.itemId) {
-        R.id.action_make_default -> {
-          editor.putInt(DEFAULT_PROFILE_ID, soundProfile.id)
-          editor.apply()
-        }
-
-        else -> {
-        }
-      }
-      true
-    }
-    popup.setOnDismissListener {
-      // Respond to popup being dismissed.
-    }
-    // Show the popup menu.
-    popup.show()
   }
 
   /**

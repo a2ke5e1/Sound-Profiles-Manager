@@ -3,6 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_make_default"
+        android:icon="@drawable/star_outline_24"
+        android:title="@string/default_indicator"
+        app:showAsAction="always" />
+
+    <item
         android:id="@+id/action_edit"
         android:icon="@drawable/edit_24"
         android:title="@string/edit"

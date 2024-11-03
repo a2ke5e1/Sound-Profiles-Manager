@@ -9,13 +9,13 @@ plugins {
 
 android {
   namespace = "com.a3.soundprofiles"
-  compileSdk = 34
+  compileSdk = 35
 
   defaultConfig {
     applicationId = "com.a3.soundprofiles"
     minSdk = 29
-    targetSdk = 34
-    versionCode = 3
+    targetSdk = 35
+    versionCode = 4
     versionName = "0.0.${versionCode}-alpha"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
