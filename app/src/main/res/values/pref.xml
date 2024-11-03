@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="default_sound_profile_pref" translatable="false">default_sound_profile</string>
+</resources>

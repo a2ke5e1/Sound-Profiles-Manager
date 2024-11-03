@@ -5,12 +5,15 @@ import android.graphics.Rect
 import android.os.Build
 import android.provider.Settings
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.PopupMenu
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.ItemKeyProvider
 import androidx.recyclerview.selection.SelectionTracker
@@ -200,6 +203,11 @@ class CardSoundProfileItemHolder(
     private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>,
 ) : RecyclerView.ViewHolder(binding.root) {
 
+  private val pref = PreferenceManager.getDefaultSharedPreferences(activity)
+  private val editor = pref.edit()
+  private val DEFAULT_PROFILE_ID = activity.getString(R.string.default_sound_profile_pref)
+  private val currentDefaultProfileId = pref.getInt(DEFAULT_PROFILE_ID, -1)
+
   /**
    * Binds the sound profile data to the view.
    *
@@ -238,6 +246,12 @@ class CardSoundProfileItemHolder(
       binding.scheduleBtn.text = context.getString(R.string.schedule)
     }
 
+    binding.defaultIndicator.visibility = if (soundProfile.id == currentDefaultProfileId) {
+      View.VISIBLE
+    } else {
+      View.GONE
+    }
+
     binding.scheduleBtn.setOnClickListener {
       if (!handleExactAlarmPermission()) {
         return@setOnClickListener
@@ -252,6 +266,42 @@ class CardSoundProfileItemHolder(
       }
       toggleIsActive(soundProfile)
     }
+
+    binding.root.setOnLongClickListener {
+      makeDefaultProfilePopup(soundProfile)
+      true
+    }
+  }
+
+  /**
+   * Creates a popup menu for setting the default sound profile.
+   *
+   * @param soundProfile The sound profile to be set as default.
+   */
+  private fun makeDefaultProfilePopup(soundProfile: SoundProfile) {
+    val context = binding.root.context
+    val menuRes = R.menu.context_menu_sound_profile
+    val popup = PopupMenu(context, binding.root)
+    popup.menuInflater.inflate(menuRes, popup.menu)
+
+    popup.setOnMenuItemClickListener { menuItem: MenuItem ->
+      // Respond to menu item click.
+      when (menuItem.itemId) {
+        R.id.action_make_default -> {
+          editor.putInt(DEFAULT_PROFILE_ID, soundProfile.id)
+          editor.apply()
+        }
+
+        else -> {
+        }
+      }
+      true
+    }
+    popup.setOnDismissListener {
+      // Respond to popup being dismissed.
+    }
+    // Show the popup menu.
+    popup.show()
   }
 
   /**
@@ -315,14 +365,17 @@ class CardSoundProfileItemHolder(
    * @return The formatted date information.
    */
   private fun formatDateInfo(soundProfile: SoundProfile): String {
-    return " · " +
-        if (soundProfile.repeatEveryday) {
-          "Every Day"
-        } else {
-          soundProfile.repeatDays.joinToString(" ") { it ->
-            it.name.substring(0, 2).lowercase().replaceFirstChar { c -> c.uppercase() }
-          }
+    return if (soundProfile.repeatEveryday || soundProfile.repeatDays.isNotEmpty()) {
+      " · " + if (soundProfile.repeatEveryday) {
+        "Every Day"
+      } else {
+        soundProfile.repeatDays.joinToString(" ") { it ->
+          it.name.substring(0, 2).lowercase().replaceFirstChar { c -> c.uppercase() }
         }
+      }
+    } else {
+      ""
+    }
   }
 
   companion object {

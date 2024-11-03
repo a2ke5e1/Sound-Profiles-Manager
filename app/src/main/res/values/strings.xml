@@ -49,4 +49,6 @@
     <string name="profile_applied_message">Profile applied: %1$s</string>
     <string name="by_continuing_you_agree_our_terms_of_service_and_privacy_policy">By continuing, you agree our Terms of Service and Privacy Policy.</string>
     <string name="start">Start</string>
+    <string name="set_as_default">Set as Default</string>
+    <string name="default_indicator">Default</string>
 </resources>

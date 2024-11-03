@@ -51,6 +51,7 @@ dependencies {
   implementation(libs.androidx.core.splashscreen)
   implementation(libs.play.services.ads)
   implementation(libs.firebase.crashlytics)
+  implementation(libs.androidx.preference.ktx)
   annotationProcessor(libs.androidx.room.compiler)
   ksp(libs.androidx.room.compiler)
   implementation(libs.androidx.room.ktx)
