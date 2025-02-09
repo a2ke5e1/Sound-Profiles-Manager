@@ -446,7 +446,7 @@ class MainActivity : AppCompatActivity() {
                 })
             .withNativeAdOptions(
                 NativeAdOptions.Builder()
-                    .setAdChoicesPlacement(NativeAdOptions.ADCHOICES_TOP_RIGHT)
+                    .setAdChoicesPlacement(NativeAdOptions.ADCHOICES_BOTTOM_RIGHT)
                     .build())
             .build()
 

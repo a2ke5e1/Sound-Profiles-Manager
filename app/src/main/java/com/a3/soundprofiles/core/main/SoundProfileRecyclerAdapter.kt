@@ -186,6 +186,7 @@ class AdViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         }
     adView.callToActionView =
         adView.findViewById<MaterialButton>(R.id.call_to_action).apply { text = ad.callToAction }
+
     adView.setNativeAd(ad)
   }
 }
