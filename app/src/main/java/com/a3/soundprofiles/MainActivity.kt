@@ -2,16 +2,20 @@ package com.a3.soundprofiles
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.ContentObserver
+import android.graphics.drawable.ColorDrawable
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
@@ -25,6 +29,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -134,6 +139,7 @@ class MainActivity : AppCompatActivity() {
     mainViewModel.loadAllSoundProfiles()
     setupRecyclerView()
     observeViewModel()
+    handleCreateFabVisibility()
     setUpAds()
     binding.fab.setOnClickListener {
       val intent = SoundProfileManager.createIntent(this)
@@ -168,7 +174,16 @@ class MainActivity : AppCompatActivity() {
       android.provider.Settings.System.CONTENT_URI, true, userSoundObserver
     )
 
+  }
 
+  private fun handleCreateFabVisibility() {
+    binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+      if (scrollY > 0) {
+        binding.fab.hide()
+      } else {
+        binding.fab.show()
+      }
+    }
   }
 
 
@@ -186,14 +201,22 @@ class MainActivity : AppCompatActivity() {
 
   /** Sets up window insets to handle system bars. */
   private fun setupWindowInsets() {
-    ViewCompat.setOnApplyWindowInsetsListener(binding.appBarLayout) { v, insets ->
+    ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, insets ->
       val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
       v.setPadding(0, systemBars.top, 0, 0)
       insets
     }
-    ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-      v.setPadding(0, 0, 0, systemBars.bottom)
+    ViewCompat.setOnApplyWindowInsetsListener(binding.nestedScrollView) { v, insets ->
+      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+      v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
+      insets
+    }
+    ViewCompat.setOnApplyWindowInsetsListener(binding.fab) { v, insets ->
+      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.navigationBars())
+      v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        bottomMargin += systemBars.bottom
+        rightMargin += systemBars.right
+      }
       insets
     }
   }
@@ -311,10 +334,16 @@ class MainActivity : AppCompatActivity() {
         menu.findItem(R.id.action_make_default).isVisible = tracker.selection.size() == 1
         supportActionBar?.setHomeAsUpIndicator(R.drawable.close_24)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.toolbar.setBackgroundColor(
+          getColorFromAttr(com.google.android.material.R.attr.colorSurfaceVariant)
+        )
+
         setOnMenuItemClickListener { handleMenuItemClick(it) }
       } else {
         title = getString(R.string.app_name)
         inflateMenu(R.menu.main_menu)
+        binding.toolbar.setBackgroundResource(0)
         setOnMenuItemClickListener { onOptionsItemSelected(it) }
       }
     }
@@ -377,6 +406,12 @@ class MainActivity : AppCompatActivity() {
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.main_menu, menu)
     return true
+  }
+
+  fun Context.getColorFromAttr(attr: Int): Int {
+    val typedValue = TypedValue()
+    theme.resolveAttribute(attr, typedValue, true)
+    return typedValue.data
   }
 
   /**
