@@ -119,25 +119,30 @@ class SoundProfileManager : AppCompatActivity() {
       Log.d("SoundProfileManager", "Sound profile loaded: $soundProfile")
     }
 
-    binding.ringerVolume.addOnChangeListener { _, value, _ ->
-      if (isProgrammaticChange) return@addOnChangeListener
-      createEditSoundProfileViewModel.setRingerVolume(value)
+    binding.ringerVolume.addOnChangeListener { _, value, fromUser ->
+      if (fromUser) {
+        createEditSoundProfileViewModel.setRingerVolume(value)
+      }
     }
-    binding.mediaVolume.addOnChangeListener { _, value, _ ->
-      if (isProgrammaticChange) return@addOnChangeListener
-      createEditSoundProfileViewModel.setMediaVolume(value)
+    binding.mediaVolume.addOnChangeListener { _, value, fromUser ->
+      if (fromUser) {
+        createEditSoundProfileViewModel.setMediaVolume(value)
+      }
     }
-    binding.notificationVolume.addOnChangeListener { _, value, _ ->
-      if (isProgrammaticChange) return@addOnChangeListener
-      createEditSoundProfileViewModel.setNotificationVolume(value)
+    binding.notificationVolume.addOnChangeListener { _, value, fromUser ->
+      if (fromUser) {
+        createEditSoundProfileViewModel.setNotificationVolume(value)
+      }
     }
-    binding.callVolume.addOnChangeListener { _, value, _ ->
-      if (isProgrammaticChange) return@addOnChangeListener
-      createEditSoundProfileViewModel.setCallVolume(value)
+    binding.callVolume.addOnChangeListener { _, value, fromUser ->
+      if (fromUser) {
+        createEditSoundProfileViewModel.setCallVolume(value)
+      }
     }
-    binding.alarmVolume.addOnChangeListener { _, value, _ ->
-      if (isProgrammaticChange) return@addOnChangeListener
-      createEditSoundProfileViewModel.setAlarmVolume(value)
+    binding.alarmVolume.addOnChangeListener { _, value, fromUser ->
+      if (fromUser) {
+        createEditSoundProfileViewModel.setAlarmVolume(value)
+      }
     }
 
     binding.selectDayContainer.setOnCheckedStateChangeListener { chip, isChecked ->

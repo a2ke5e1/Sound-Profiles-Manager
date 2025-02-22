@@ -76,14 +76,15 @@
                 android:id="@+id/media_slider_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
                 tools:ignore="MissingConstraints">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/media_volume"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/media_volume"
+                        android:src="@drawable/music_note_24" />
 
                 <com.google.android.material.slider.Slider
                     android:id="@+id/media_volume"
@@ -97,14 +98,15 @@
                 android:id="@+id/notification_slider_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                tools:ignore="MissingConstraints">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    tools:ignore="MissingConstraints">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/notification_volume"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/notification_volume"
+                        android:src="@drawable/notifications_24" />
 
                 <com.google.android.material.slider.Slider
                     android:id="@+id/notification_volume"
@@ -118,14 +120,15 @@
                 android:id="@+id/ringer_slider_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                tools:ignore="MissingConstraints">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    tools:ignore="MissingConstraints">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/ringer_volume"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/ringer_volume"
+                        android:src="@drawable/ring_volume_24" />
 
                 <com.google.android.material.slider.Slider
                     android:id="@+id/ringer_volume"
@@ -139,14 +142,15 @@
                 android:id="@+id/call_slider_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                tools:ignore="MissingConstraints">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    tools:ignore="MissingConstraints">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/call_volume"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/call_volume"
+                        android:src="@drawable/call_24" />
 
                 <com.google.android.material.slider.Slider
                     android:id="@+id/call_volume"
@@ -160,14 +164,15 @@
                 android:id="@+id/alarm_slider_container"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                tools:ignore="MissingConstraints">
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    tools:ignore="MissingConstraints">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/alarm_volume"
-                    android:textAppearance="@style/TextAppearance.Material3.LabelLarge" />
+                <com.google.android.material.imageview.ShapeableImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/alarm_volume"
+                        android:src="@drawable/alarm_24" />
 
                 <com.google.android.material.slider.Slider
                     android:id="@+id/alarm_volume"
