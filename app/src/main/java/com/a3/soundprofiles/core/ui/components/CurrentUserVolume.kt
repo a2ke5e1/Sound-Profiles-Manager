@@ -113,7 +113,8 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
         val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
         val maxVolume = audioManager.getStreamMaxVolume(streamType)
         val volumeLevel = (volume * maxVolume).toInt()
-        audioManager.setStreamVolume(streamType, volumeLevel, AudioManager.FLAG_SHOW_UI)
+        audioManager.setStreamVolume(streamType, volumeLevel, AudioManager.FLAG_VIBRATE)
+        performClick()
       }
       true
     }

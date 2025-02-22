@@ -1,6 +1,7 @@
 package com.a3.soundprofiles.core.main
 
 import android.content.Context
+import android.database.ContentObserver
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,15 +12,17 @@ import com.a3.soundprofiles.core.dao.SoundProfileDao
 import com.a3.soundprofiles.core.data.SoundProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import java.util.logging.Handler
 import javax.inject.Inject
 
 sealed class MainState {
-  object Loading : MainState()
+  data object Loading : MainState()
 
   data class Success(val soundProfiles: List<SoundProfile>) : MainState()
 
-  object Empty : MainState()
+  data object Empty : MainState()
 
   data class Error(val message: String) : MainState()
 }

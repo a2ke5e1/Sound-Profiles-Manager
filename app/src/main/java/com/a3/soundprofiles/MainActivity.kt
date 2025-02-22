@@ -4,9 +4,11 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.database.ContentObserver
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -31,7 +33,12 @@ import com.a3.soundprofiles.WelcomeScreen.Companion.FIRST_LAUNCH
 import com.a3.soundprofiles.WelcomeScreen.Companion.GLOBAL_APP_PREF
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.core.di.components.PermissionMessageDialog
-import com.a3.soundprofiles.core.main.*
+import com.a3.soundprofiles.core.main.MainState
+import com.a3.soundprofiles.core.main.MainViewModel
+import com.a3.soundprofiles.core.main.SoundProfileItemDetailsLookup
+import com.a3.soundprofiles.core.main.SoundProfileItemKeyProvider
+import com.a3.soundprofiles.core.main.SoundProfileRecyclerAdapter
+import com.a3.soundprofiles.core.main.SpaceBetweenItemDecorator
 import com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
 import com.a3.soundprofiles.core.ui.dialogbox.AboutDialog
 import com.a3.soundprofiles.core.ui.dialogbox.AboutDialog.Companion.shareApp
@@ -73,6 +80,24 @@ class MainActivity : AppCompatActivity() {
 
   private val requestPermissionLauncher =
       registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
+
+  private val userSoundObserver by lazy {
+    object : ContentObserver(Handler(this.mainLooper)) {
+      override fun onChange(selfChange: Boolean) {
+        super.onChange(selfChange)
+
+        val currentVolume = CurrentUserVolumeView.getCurrentVolume(this@MainActivity)
+        binding.apply {
+          userCallVolume.setVolume(currentVolume.callVolume)
+          userMediaVolume.setVolume(currentVolume.mediaVolume)
+          userRingerVolume.setVolume(currentVolume.ringerVolume)
+          userAlarmVolume.setVolume(currentVolume.alarmVolume)
+          userNotificationVolume.setVolume(currentVolume.notificationVolume)
+        }
+
+      }
+    }
+  }
 
   /**
    * Called when the activity is first created.
@@ -118,33 +143,34 @@ class MainActivity : AppCompatActivity() {
       requestNotificationPermission()
     }
 
-    val currentVolume = CurrentUserVolumeView.getCurrentVolume(this)
     binding.userMediaVolume.apply {
-      setVolume(currentVolume.mediaVolume)
       setIcon(R.drawable.music_note_24)
       addOnChangeListener(AudioManager.STREAM_MUSIC)
     }
     binding.userRingerVolume.apply {
-      setVolume(currentVolume.ringerVolume)
       setIcon(R.drawable.ring_volume_24)
       addOnChangeListener(AudioManager.STREAM_RING)
     }
     binding.userAlarmVolume.apply {
-      setVolume(currentVolume.alarmVolume)
       setIcon(R.drawable.alarm_24)
       addOnChangeListener(AudioManager.STREAM_ALARM)
     }
     binding.userNotificationVolume.apply {
-      setVolume(currentVolume.notificationVolume)
       setIcon(R.drawable.notifications_24)
       addOnChangeListener(AudioManager.STREAM_NOTIFICATION)
     }
     binding.userCallVolume.apply {
-      setVolume(currentVolume.callVolume)
       setIcon(R.drawable.call_24)
       addOnChangeListener(AudioManager.STREAM_VOICE_CALL)
     }
+
+    this.contentResolver.registerContentObserver(
+      android.provider.Settings.System.CONTENT_URI, true, userSoundObserver
+    )
+
+
   }
+
 
   override fun onResume() {
     super.onResume()
@@ -483,5 +509,10 @@ class MainActivity : AppCompatActivity() {
             }
           }
         }) {}
+  }
+
+  override fun onDestroy() {
+    this.contentResolver.unregisterContentObserver(userSoundObserver)
+    super.onDestroy()
   }
 }
