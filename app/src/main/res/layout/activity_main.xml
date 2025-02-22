@@ -42,43 +42,44 @@
             android:paddingStart="8dp"
             android:paddingEnd="8dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 android:orientation="horizontal">
 
-                <androidx.constraintlayout.helper.widget.Flow
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:constraint_referenced_ids="user_ringer_volume, user_media_volume, user_call_volume, user_notification_volume, user_alarm_volume" />
 
                 <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
                     android:id="@+id/user_ringer_volume"
                     android:layout_width="wrap_content"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
 
                 <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
                     android:id="@+id/user_media_volume"
                     android:layout_width="wrap_content"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
 
                 <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
                     android:id="@+id/user_call_volume"
                     android:layout_width="wrap_content"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
 
                 <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
                     android:id="@+id/user_notification_volume"
                     android:layout_width="wrap_content"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
 
                 <com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
                     android:id="@+id/user_alarm_volume"
                     android:layout_width="wrap_content"
+                    android:layout_weight="1"
                     android:layout_height="wrap_content" />
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
 
 
             <TextView
