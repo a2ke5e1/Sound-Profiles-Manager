@@ -86,23 +86,7 @@ class MainActivity : AppCompatActivity() {
   private val requestPermissionLauncher =
       registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
 
-  private val userSoundObserver by lazy {
-    object : ContentObserver(Handler(this.mainLooper)) {
-      override fun onChange(selfChange: Boolean) {
-        super.onChange(selfChange)
 
-        val currentVolume = CurrentUserVolumeView.getCurrentVolume(this@MainActivity)
-        binding.apply {
-          userCallVolume.setVolume(currentVolume.callVolume)
-          userMediaVolume.setVolume(currentVolume.mediaVolume)
-          userRingerVolume.setVolume(currentVolume.ringerVolume)
-          userAlarmVolume.setVolume(currentVolume.alarmVolume)
-          userNotificationVolume.setVolume(currentVolume.notificationVolume)
-        }
-
-      }
-    }
-  }
 
   /**
    * Called when the activity is first created.
@@ -149,53 +133,15 @@ class MainActivity : AppCompatActivity() {
       requestNotificationPermission()
     }
 
-    binding.userMediaVolume.apply {
-      setIcon(R.drawable.music_note_24)
-      addOnChangeListener(AudioManager.STREAM_MUSIC)
-    }
-    binding.userRingerVolume.apply {
-      setIcon(R.drawable.ring_volume_24)
-      addOnChangeListener(AudioManager.STREAM_RING)
-    }
-    binding.userAlarmVolume.apply {
-      setIcon(R.drawable.alarm_24)
-      addOnChangeListener(AudioManager.STREAM_ALARM)
-    }
-    binding.userNotificationVolume.apply {
-      setIcon(R.drawable.notifications_24)
-      addOnChangeListener(AudioManager.STREAM_NOTIFICATION)
-    }
-    binding.userCallVolume.apply {
-      setIcon(R.drawable.call_24)
-      addOnChangeListener(AudioManager.STREAM_VOICE_CALL)
-    }
-
-    this.contentResolver.registerContentObserver(
-      android.provider.Settings.System.CONTENT_URI, true, userSoundObserver
-    )
-
   }
 
   private fun handleCreateFabVisibility() {
-    binding.nestedScrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
+    binding.recyclerView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
       if (scrollY > 0) {
         binding.fab.hide()
       } else {
         binding.fab.show()
       }
-    }
-  }
-
-
-  override fun onResume() {
-    super.onResume()
-    val systemVolume = CurrentUserVolumeView.getCurrentVolume(this)
-    binding.apply {
-      userCallVolume.setVolume(systemVolume.callVolume)
-      userMediaVolume.setVolume(systemVolume.mediaVolume)
-      userRingerVolume.setVolume(systemVolume.ringerVolume)
-      userAlarmVolume.setVolume(systemVolume.alarmVolume)
-      userNotificationVolume.setVolume(systemVolume.notificationVolume)
     }
   }
 
@@ -206,7 +152,7 @@ class MainActivity : AppCompatActivity() {
       v.setPadding(0, systemBars.top, 0, 0)
       insets
     }
-    ViewCompat.setOnApplyWindowInsetsListener(binding.nestedScrollView) { v, insets ->
+    ViewCompat.setOnApplyWindowInsetsListener(binding.recyclerView) { v, insets ->
       val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
       v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
       insets
@@ -225,7 +171,7 @@ class MainActivity : AppCompatActivity() {
   private fun setupRecyclerView() {
     val adapter =
         SoundProfileRecyclerAdapter(
-            mutableListOf(), this, soundProfileManagerLauncher, mainViewModel::toggleIsActive)
+          this, this, soundProfileManagerLauncher, mainViewModel::toggleIsActive)
     binding.recyclerView.apply {
       this.adapter = adapter
       layoutManager = LinearLayoutManager(this@MainActivity)
@@ -544,10 +490,5 @@ class MainActivity : AppCompatActivity() {
             }
           }
         }) {}
-  }
-
-  override fun onDestroy() {
-    this.contentResolver.unregisterContentObserver(userSoundObserver)
-    super.onDestroy()
   }
 }

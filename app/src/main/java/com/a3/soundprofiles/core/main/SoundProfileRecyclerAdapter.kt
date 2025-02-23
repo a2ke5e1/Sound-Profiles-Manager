@@ -1,18 +1,20 @@
 package com.a3.soundprofiles.core.main
 
+import android.content.Context
 import android.content.Intent
+import android.database.ContentObserver
 import android.graphics.Rect
+import android.media.AudioManager
 import android.os.Build
+import android.os.Handler
 import android.provider.Settings
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.PopupMenu
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.selection.ItemDetailsLookup
 import androidx.recyclerview.selection.ItemKeyProvider
@@ -23,11 +25,28 @@ import com.a3.soundprofiles.SoundProfileManager.Companion.toDateTime
 import com.a3.soundprofiles.core.SoundProfileScheduler
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.core.di.components.PermissionMessageDialog
+import com.a3.soundprofiles.core.ui.components.CurrentUserVolumeView
 import com.a3.soundprofiles.databinding.CardSoundProfileItemBinding
+import com.a3.soundprofiles.databinding.LabelItemBinding
+import com.a3.soundprofiles.databinding.SoundDashboardItemBinding
 import com.google.android.gms.ads.nativead.NativeAd
 import com.google.android.gms.ads.nativead.NativeAdView
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.imageview.ShapeableImageView
+
+
+sealed class SoundProfileRecyclerType(
+  soundProfiles: MutableList<SoundProfile>? = null,
+  ad: NativeAd? = null
+) {
+  data class Profiles(val soundProfiles: MutableList<SoundProfile>) :
+    SoundProfileRecyclerType(soundProfiles)
+
+  data class Ad(val ad: NativeAd) : SoundProfileRecyclerType(ad = ad)
+  data object Label : SoundProfileRecyclerType()
+  data object SoundSettingsHeader : SoundProfileRecyclerType()
+}
+
 
 /**
  * Adapter class for managing sound profiles and ads in a RecyclerView.
@@ -38,51 +57,79 @@ import com.google.android.material.imageview.ShapeableImageView
  * @property toggleIsActive Callback to toggle the active state of a sound profile.
  */
 class SoundProfileRecyclerAdapter(
-    val soundProfiles: MutableList<Any>,
+    val context: Context,
     val activity: AppCompatActivity,
     private val soundProfileManagerLauncher: ActivityResultLauncher<Intent>,
     private val toggleIsActive: (soundProfile: SoundProfile) -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
   var tracker: SelectionTracker<Long>? = null
+  private val items = mutableListOf<Any>()
 
   companion object {
     private const val VIEW_TYPE_PROFILE = 0
     private const val VIEW_TYPE_AD = 1
+    private const val VIEW_TYPE_LABEL = 2
+    private const val VIEW_TYPE_SOUND_SETTINGS_HEADER = 3
   }
 
   init {
     setHasStableIds(true)
+    items.add(SoundProfileRecyclerType.SoundSettingsHeader)
+    items.add(SoundProfileRecyclerType.Label)
   }
 
   override fun getItemViewType(position: Int): Int {
-    return if (soundProfiles[position] is SoundProfile) VIEW_TYPE_PROFILE else VIEW_TYPE_AD
+    return when (items[position]) {
+      is SoundProfile -> VIEW_TYPE_PROFILE
+      is NativeAd -> VIEW_TYPE_AD
+      is SoundProfileRecyclerType.Label -> VIEW_TYPE_LABEL
+      is SoundProfileRecyclerType.SoundSettingsHeader -> VIEW_TYPE_SOUND_SETTINGS_HEADER
+      else -> throw IllegalArgumentException("Invalid item type")
+    }
   }
 
   // Create new views (invoked by the layout manager)
   override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-    return if (viewType == VIEW_TYPE_PROFILE) {
-      val inflater = LayoutInflater.from(viewGroup.context)
-      val binding = CardSoundProfileItemBinding.inflate(inflater, viewGroup, false)
-      CardSoundProfileItemHolder(activity, binding, soundProfileManagerLauncher)
-    } else {
-      val inflater = LayoutInflater.from(viewGroup.context)
-      val view = inflater.inflate(R.layout.unifed_ad_item, viewGroup, false)
-      AdViewHolder(view)
+    val inflater = LayoutInflater.from(viewGroup.context)
+    return when (viewType) {
+      VIEW_TYPE_PROFILE -> {
+        val binding = CardSoundProfileItemBinding.inflate(inflater, viewGroup, false)
+        CardSoundProfileItemHolder(activity, binding, soundProfileManagerLauncher)
+      }
+
+      VIEW_TYPE_SOUND_SETTINGS_HEADER -> {
+        val binding = SoundDashboardItemBinding.inflate(inflater, viewGroup, false)
+        SoundDashboardBViewHolder(context, binding)
+      }
+
+      VIEW_TYPE_AD -> {
+        val view = inflater.inflate(R.layout.unifed_ad_item, viewGroup, false)
+        AdViewHolder(view)
+      }
+
+      VIEW_TYPE_LABEL -> {
+        val binding = LabelItemBinding.inflate(inflater, viewGroup, false)
+        LabelViewHolder(binding)
+      }
+
+      else -> throw IllegalArgumentException("Invalid view type")
     }
   }
 
   // Replace the contents of a view (invoked by the layout manager)
   override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
     if (getItemViewType(position) == VIEW_TYPE_PROFILE) {
-      val soundProfile = soundProfiles[position] as SoundProfile
+      val soundProfile = items[position] as SoundProfile
       (viewHolder as CardSoundProfileItemHolder).bind(soundProfile) {
         toggleIsActive(it)
         notifyItemChanged(position)
       }
       tracker?.let { viewHolder.bindSelection(it.isSelected(soundProfile.id.toLong())) }
-    } else {
-      val ad = soundProfiles[position] as NativeAd
+    } else if (getItemViewType(position) == VIEW_TYPE_SOUND_SETTINGS_HEADER) {
+      (viewHolder as SoundDashboardBViewHolder).bind()
+    } else if (getItemViewType(position) == VIEW_TYPE_AD) {
+      val ad = items[position] as NativeAd
       (viewHolder as AdViewHolder).bind(ad)
     }
   }
@@ -93,16 +140,14 @@ class SoundProfileRecyclerAdapter(
    * @param ad The ad to be inserted.
    */
   fun insertAd(ad: NativeAd) {
-    if (soundProfiles.size > 2) {
-      soundProfiles.add(2, ad)
-    } else {
-      soundProfiles.add(ad)
+    if (items.size >= 4) {
+      items.add(4, ad)
+      notifyItemInserted(4)
     }
-    notifyItemInserted(2)
   }
 
   // Return the size of your dataset (invoked by the layout manager)
-  override fun getItemCount() = soundProfiles.size
+  override fun getItemCount() = items.size
 
   /**
    * Adds a new sound profile to the list.
@@ -110,8 +155,8 @@ class SoundProfileRecyclerAdapter(
    * @param soundProfile The sound profile to be added.
    */
   fun addSoundProfile(soundProfile: SoundProfile) {
-    soundProfiles.add(soundProfile)
-    notifyItemInserted(soundProfiles.size - 1)
+    items.add(soundProfile)
+    notifyItemInserted(items.size - 1)
   }
 
   /**
@@ -120,14 +165,13 @@ class SoundProfileRecyclerAdapter(
    * @param newSoundProfiles The new list of sound profiles.
    */
   fun updateSoundProfiles(newSoundProfiles: List<SoundProfile>) {
-    soundProfiles.clear()
-    soundProfiles.addAll(newSoundProfiles)
+    items.addAll(newSoundProfiles)
     notifyDataSetChanged()
   }
 
   override fun getItemId(position: Int): Long {
     return if (getItemViewType(position) == VIEW_TYPE_PROFILE) {
-      (soundProfiles[position] as SoundProfile).id.toLong()
+      (items[position] as SoundProfile).id.toLong()
     } else {
       -1L // No sound profile will have an id of -1 so this is safe as long as we are only injecting
       // one ad
@@ -142,9 +186,9 @@ class SoundProfileRecyclerAdapter(
   fun getSelectedSoundProfile(): List<SoundProfile> {
     val selectedProfiles = mutableListOf<SoundProfile>()
     tracker?.let {
-      for (soundProfile in soundProfiles) {
-        if (soundProfile is SoundProfile && it.isSelected(soundProfile.id.toLong())) {
-          selectedProfiles.add(soundProfile)
+      for (item in items) {
+        if (item is SoundProfile && it.isSelected(item.id.toLong())) {
+          selectedProfiles.add(item)
         }
       }
     }
@@ -154,14 +198,23 @@ class SoundProfileRecyclerAdapter(
   /** Selects all sound profiles in the list. */
   fun selectAll() {
     tracker?.let {
-      for (soundProfile in soundProfiles) {
-        if (soundProfile is SoundProfile) {
-          it.select(soundProfile.id.toLong())
+      for (item in items) {
+        if (item is SoundProfile) {
+          it.select(item.id.toLong())
         }
       }
     }
   }
+
+  override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+    super.onViewDetachedFromWindow(holder)
+    if (holder is SoundDashboardBViewHolder) {
+      holder.onDetachedFromWindow()
+    }
+  }
 }
+
+class LabelViewHolder(binding: LabelItemBinding) : RecyclerView.ViewHolder(binding.root)
 
 /**
  * ViewHolder class for displaying ads.
@@ -352,7 +405,75 @@ class CardSoundProfileItemHolder(
     fun volumeToString(volume: Float): String {
       return "${(volume * 100).toInt()}%"
     }
+
+
   }
+}
+
+class SoundDashboardBViewHolder(val context: Context, val binding: SoundDashboardItemBinding) :
+  RecyclerView.ViewHolder(binding.root) {
+
+  private val userSoundObserver =
+    object : ContentObserver(Handler(context.mainLooper)) {
+      override fun onChange(selfChange: Boolean) {
+        super.onChange(selfChange)
+
+        val currentVolume = CurrentUserVolumeView.getCurrentVolume(context)
+        binding.apply {
+          userCallVolume.setVolume(currentVolume.callVolume)
+          userMediaVolume.setVolume(currentVolume.mediaVolume)
+          userRingerVolume.setVolume(currentVolume.ringerVolume)
+          userAlarmVolume.setVolume(currentVolume.alarmVolume)
+          userNotificationVolume.setVolume(currentVolume.notificationVolume)
+        }
+
+      }
+    }
+
+
+  fun bind() {
+    binding.userMediaVolume.apply {
+      setIcon(R.drawable.music_note_24)
+      addOnChangeListener(AudioManager.STREAM_MUSIC)
+    }
+    binding.userRingerVolume.apply {
+      setIcon(R.drawable.ring_volume_24)
+      addOnChangeListener(AudioManager.STREAM_RING)
+    }
+    binding.userAlarmVolume.apply {
+      setIcon(R.drawable.alarm_24)
+      addOnChangeListener(AudioManager.STREAM_ALARM)
+    }
+    binding.userNotificationVolume.apply {
+      setIcon(R.drawable.notifications_24)
+      addOnChangeListener(AudioManager.STREAM_NOTIFICATION)
+    }
+    binding.userCallVolume.apply {
+      setIcon(R.drawable.call_24)
+      addOnChangeListener(AudioManager.STREAM_VOICE_CALL)
+    }
+
+    // Set the initial volume values, and register a content observer to update the volume values
+    val systemVolume = CurrentUserVolumeView.getCurrentVolume(context)
+    binding.apply {
+      userCallVolume.setVolume(systemVolume.callVolume)
+      userMediaVolume.setVolume(systemVolume.mediaVolume)
+      userRingerVolume.setVolume(systemVolume.ringerVolume)
+      userAlarmVolume.setVolume(systemVolume.alarmVolume)
+      userNotificationVolume.setVolume(systemVolume.notificationVolume)
+    }
+
+    context.contentResolver.registerContentObserver(
+      Settings.System.CONTENT_URI,
+      true,
+      userSoundObserver
+    )
+  }
+
+  fun onDetachedFromWindow() {
+    context.contentResolver.unregisterContentObserver(userSoundObserver)
+  }
+
 }
 
 /**
