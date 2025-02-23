@@ -36,12 +36,9 @@ import com.google.android.material.imageview.ShapeableImageView
 
 
 sealed class SoundProfileRecyclerType(
-  soundProfiles: MutableList<SoundProfile>? = null,
   ad: NativeAd? = null
 ) {
-  data class Profiles(val soundProfiles: MutableList<SoundProfile>) :
-    SoundProfileRecyclerType(soundProfiles)
-
+  data class Profile(val soundProfile: SoundProfile) : SoundProfileRecyclerType()
   data class Ad(val ad: NativeAd) : SoundProfileRecyclerType(ad = ad)
   data object Label : SoundProfileRecyclerType()
   data object SoundSettingsHeader : SoundProfileRecyclerType()
@@ -64,7 +61,10 @@ class SoundProfileRecyclerAdapter(
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
   var tracker: SelectionTracker<Long>? = null
-  private val items = mutableListOf<Any>()
+  private val items = mutableListOf<SoundProfileRecyclerType>().apply {
+    add(SoundProfileRecyclerType.SoundSettingsHeader)
+    add(SoundProfileRecyclerType.Label)
+  }
 
   companion object {
     private const val VIEW_TYPE_PROFILE = 0
@@ -75,14 +75,12 @@ class SoundProfileRecyclerAdapter(
 
   init {
     setHasStableIds(true)
-    items.add(SoundProfileRecyclerType.SoundSettingsHeader)
-    items.add(SoundProfileRecyclerType.Label)
   }
 
   override fun getItemViewType(position: Int): Int {
     return when (items[position]) {
-      is SoundProfile -> VIEW_TYPE_PROFILE
-      is NativeAd -> VIEW_TYPE_AD
+      is SoundProfileRecyclerType.Profile -> VIEW_TYPE_PROFILE
+      is SoundProfileRecyclerType.Ad -> VIEW_TYPE_AD
       is SoundProfileRecyclerType.Label -> VIEW_TYPE_LABEL
       is SoundProfileRecyclerType.SoundSettingsHeader -> VIEW_TYPE_SOUND_SETTINGS_HEADER
       else -> throw IllegalArgumentException("Invalid item type")
@@ -119,18 +117,30 @@ class SoundProfileRecyclerAdapter(
 
   // Replace the contents of a view (invoked by the layout manager)
   override fun onBindViewHolder(viewHolder: RecyclerView.ViewHolder, position: Int) {
-    if (getItemViewType(position) == VIEW_TYPE_PROFILE) {
-      val soundProfile = items[position] as SoundProfile
-      (viewHolder as CardSoundProfileItemHolder).bind(soundProfile) {
-        toggleIsActive(it)
-        notifyItemChanged(position)
+    when (val item = items[position]) {
+      is SoundProfileRecyclerType.Profile -> {
+        val holder = viewHolder as CardSoundProfileItemHolder
+        holder.bind(item.soundProfile) { soundProfile ->
+          toggleIsActive(soundProfile)
+        }
+        tracker?.let {
+          holder.bindSelection(it.isSelected(item.soundProfile.id.toLong()))
+        }
       }
-      tracker?.let { viewHolder.bindSelection(it.isSelected(soundProfile.id.toLong())) }
-    } else if (getItemViewType(position) == VIEW_TYPE_SOUND_SETTINGS_HEADER) {
-      (viewHolder as SoundDashboardBViewHolder).bind()
-    } else if (getItemViewType(position) == VIEW_TYPE_AD) {
-      val ad = items[position] as NativeAd
-      (viewHolder as AdViewHolder).bind(ad)
+
+      is SoundProfileRecyclerType.Ad -> {
+        val holder = viewHolder as AdViewHolder
+        holder.bind(item.ad)
+      }
+
+      is SoundProfileRecyclerType.Label -> {
+        // Do nothing
+      }
+
+      is SoundProfileRecyclerType.SoundSettingsHeader -> {
+        val holder = viewHolder as SoundDashboardBViewHolder
+        holder.bind()
+      }
     }
   }
 
@@ -141,7 +151,7 @@ class SoundProfileRecyclerAdapter(
    */
   fun insertAd(ad: NativeAd) {
     if (items.size >= 4) {
-      items.add(4, ad)
+      items.add(4, SoundProfileRecyclerType.Ad(ad))
       notifyItemInserted(4)
     }
   }
@@ -155,7 +165,7 @@ class SoundProfileRecyclerAdapter(
    * @param soundProfile The sound profile to be added.
    */
   fun addSoundProfile(soundProfile: SoundProfile) {
-    items.add(soundProfile)
+    items.add(SoundProfileRecyclerType.Profile(soundProfile))
     notifyItemInserted(items.size - 1)
   }
 
@@ -165,13 +175,15 @@ class SoundProfileRecyclerAdapter(
    * @param newSoundProfiles The new list of sound profiles.
    */
   fun updateSoundProfiles(newSoundProfiles: List<SoundProfile>) {
-    items.addAll(newSoundProfiles)
+    items.subList(2, items.size)
+      .clear() // Remove all sound profiles, without removing the header and label
+    items.addAll(newSoundProfiles.map { SoundProfileRecyclerType.Profile(it) })
     notifyDataSetChanged()
   }
 
   override fun getItemId(position: Int): Long {
     return if (getItemViewType(position) == VIEW_TYPE_PROFILE) {
-      (items[position] as SoundProfile).id.toLong()
+      (items[position] as SoundProfileRecyclerType.Profile).soundProfile.id.toLong()
     } else {
       -1L // No sound profile will have an id of -1 so this is safe as long as we are only injecting
       // one ad
@@ -187,8 +199,8 @@ class SoundProfileRecyclerAdapter(
     val selectedProfiles = mutableListOf<SoundProfile>()
     tracker?.let {
       for (item in items) {
-        if (item is SoundProfile && it.isSelected(item.id.toLong())) {
-          selectedProfiles.add(item)
+        if (item is SoundProfileRecyclerType.Profile && it.isSelected(item.soundProfile.id.toLong())) {
+          selectedProfiles.add(item.soundProfile)
         }
       }
     }
@@ -199,8 +211,8 @@ class SoundProfileRecyclerAdapter(
   fun selectAll() {
     tracker?.let {
       for (item in items) {
-        if (item is SoundProfile) {
-          it.select(item.id.toLong())
+        if (item is SoundProfileRecyclerType.Profile) {
+          it.select(item.soundProfile.id.toLong())
         }
       }
     }
@@ -433,19 +445,19 @@ class SoundDashboardBViewHolder(val context: Context, val binding: SoundDashboar
 
   fun bind() {
     binding.userMediaVolume.apply {
-      setIcon(R.drawable.music_note_24)
+      setStateBasedIcon(R.drawable.music_note_24, R.drawable.music_off_24)
       addOnChangeListener(AudioManager.STREAM_MUSIC)
     }
     binding.userRingerVolume.apply {
-      setIcon(R.drawable.ring_volume_24)
+      setStateBasedIcon(R.drawable.ring_volume_24, R.drawable.vibration_24)
       addOnChangeListener(AudioManager.STREAM_RING)
     }
     binding.userAlarmVolume.apply {
-      setIcon(R.drawable.alarm_24)
+      setStateBasedIcon(R.drawable.alarm_24, R.drawable.alarm_off_24)
       addOnChangeListener(AudioManager.STREAM_ALARM)
     }
     binding.userNotificationVolume.apply {
-      setIcon(R.drawable.notifications_24)
+      setStateBasedIcon(R.drawable.notifications_24, R.drawable.notifications_off_24)
       addOnChangeListener(AudioManager.STREAM_NOTIFICATION)
     }
     binding.userCallVolume.apply {

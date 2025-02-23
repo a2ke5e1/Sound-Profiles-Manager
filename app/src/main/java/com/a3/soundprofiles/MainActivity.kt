@@ -24,12 +24,15 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar.LayoutParams
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.core.view.updatePaddingRelative
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
@@ -147,9 +150,9 @@ class MainActivity : AppCompatActivity() {
 
   /** Sets up window insets to handle system bars. */
   private fun setupWindowInsets() {
-    ViewCompat.setOnApplyWindowInsetsListener(binding.toolbar) { v, insets ->
-      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-      v.setPadding(0, systemBars.top, 0, 0)
+    ViewCompat.setOnApplyWindowInsetsListener(binding.appBarLayout) { v, insets ->
+      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+      v.updatePadding(left = systemBars.left, right = systemBars.right, top = systemBars.top)
       insets
     }
     ViewCompat.setOnApplyWindowInsetsListener(binding.recyclerView) { v, insets ->
@@ -194,7 +197,7 @@ class MainActivity : AppCompatActivity() {
   /** Displays a loading indicator. */
   private fun showLoading() {
     binding.apply {
-      recyclerView.visibility = View.GONE
+      // recyclerView.visibility = View.GONE
       emptyProfileIndicator.visibility = View.GONE
       loadingIndicator.visibility = View.VISIBLE
     }
@@ -204,7 +207,7 @@ class MainActivity : AppCompatActivity() {
   private fun showEmptyState() {
     (binding.recyclerView.adapter as SoundProfileRecyclerAdapter).updateSoundProfiles(emptyList())
     binding.apply {
-      recyclerView.visibility = View.GONE
+      // recyclerView.visibility = View.GONE
       loadingIndicator.visibility = View.GONE
       emptyProfileIndicator.visibility = View.VISIBLE
     }
@@ -217,7 +220,7 @@ class MainActivity : AppCompatActivity() {
    */
   private fun showSuccessState(soundProfiles: List<SoundProfile>) {
     binding.apply {
-      recyclerView.visibility = View.VISIBLE
+      // recyclerView.visibility = View.VISIBLE
       loadingIndicator.visibility = View.GONE
       emptyProfileIndicator.visibility = View.GONE
     }

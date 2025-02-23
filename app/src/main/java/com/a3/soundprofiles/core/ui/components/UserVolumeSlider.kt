@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import androidx.annotation.DrawableRes
 import com.a3.soundprofiles.core.data.SoundProfile
 import com.a3.soundprofiles.databinding.ViewCurrentUserVolumeBinding
+import com.google.android.material.slider.Slider
 import java.text.NumberFormat
 import java.util.Date
 
@@ -36,6 +37,17 @@ constructor(context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 
   fun setIcon(@DrawableRes icon: Int) {
     binding.icon.setImageResource(icon)
+  }
+
+  fun setStateBasedIcon(@DrawableRes icon: Int, @DrawableRes muteIcon: Int) {
+    binding.icon.setImageResource(icon)
+    binding.slider.addOnChangeListener{ _, value, _ ->
+      if (value == 0f) {
+        binding.icon.setImageResource(muteIcon)
+      } else {
+        binding.icon.setImageResource(icon)
+      }
+    }
   }
 
   fun setVolume(volume: Float) {
