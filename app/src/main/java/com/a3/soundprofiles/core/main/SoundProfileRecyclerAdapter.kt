@@ -234,7 +234,7 @@ class LabelViewHolder(binding: LabelItemBinding) : RecyclerView.ViewHolder(bindi
  * @param view The view to be used for displaying the ad.
  */
 class AdViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-  private val adView: NativeAdView = view.findViewById(R.id.native_ad_view)
+  private val nativeAdView: NativeAdView = view.findViewById(R.id.nativeAdView)
 
   /**
    * Binds the ad data to the view.
@@ -242,17 +242,35 @@ class AdViewHolder(view: View) : RecyclerView.ViewHolder(view) {
    * @param ad The ad to be displayed.
    */
   fun bind(ad: NativeAd) {
-    adView.headlineView = adView.findViewById<TextView>(R.id.title).apply { text = ad.headline }
-    adView.bodyView = adView.findViewById<TextView>(R.id.description).apply { text = ad.body }
-    adView.iconView =
-        adView.findViewById<ShapeableImageView>(R.id.icon_image).apply {
-          setImageDrawable(ad.icon?.drawable)
-          visibility = if (ad.icon == null) View.GONE else View.VISIBLE
-        }
-    adView.callToActionView =
-        adView.findViewById<MaterialButton>(R.id.call_to_action).apply { text = ad.callToAction }
+    val callToAction = nativeAdView.findViewById<MaterialButton>(R.id.ctn)
+    val headline = nativeAdView.findViewById<TextView>(R.id.title)
+    val body = nativeAdView.findViewById<TextView>(R.id.body)
+    val provider = nativeAdView.findViewById<TextView>(R.id.provider)
+    val icon = nativeAdView.findViewById<ShapeableImageView>(R.id.icon)
 
-    adView.setNativeAd(ad)
+    // The AdLoader has finished loading ads.
+
+    headline.text = ad.headline
+    body.text = ad.body
+    if (ad.store != null) {
+      provider.text = "${ad.store} · ${ad.price}"
+    } else {
+      provider.visibility = View.GONE
+    }
+    if (ad.icon != null) {
+      icon.setImageDrawable(ad.icon!!.drawable)
+    } else {
+      icon.visibility = View.GONE
+    }
+    callToAction.text = ad.callToAction
+
+    nativeAdView.callToActionView = callToAction
+    nativeAdView.headlineView = headline
+    nativeAdView.bodyView = body
+    nativeAdView.storeView = provider
+    nativeAdView.iconView = icon
+
+    nativeAdView.setNativeAd(ad)
   }
 }
 
@@ -509,6 +527,9 @@ class SpaceBetweenItemDecorator(private val spaceHeight: Int) : RecyclerView.Ite
         top = spaceHeight
         bottom = spaceHeight
       }
+
+      left = 20
+      right = 20
     }
   }
 }
