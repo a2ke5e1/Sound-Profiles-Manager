@@ -175,8 +175,9 @@ class SoundProfileRecyclerAdapter(
    * @param newSoundProfiles The new list of sound profiles.
    */
   fun updateSoundProfiles(newSoundProfiles: List<SoundProfile>) {
-    items.subList(2, items.size)
-      .clear() // Remove all sound profiles, without removing the header and label
+    items.clear()
+    items.add(SoundProfileRecyclerType.SoundSettingsHeader)
+    items.add(SoundProfileRecyclerType.Label)
     items.addAll(newSoundProfiles.map { SoundProfileRecyclerType.Profile(it) })
     notifyDataSetChanged()
   }

@@ -37,6 +37,7 @@ import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.a3.soundprofiles.WelcomeScreen.Companion.FIRST_LAUNCH
 import com.a3.soundprofiles.WelcomeScreen.Companion.GLOBAL_APP_PREF
 import com.a3.soundprofiles.core.data.SoundProfile
@@ -127,7 +128,6 @@ class MainActivity : AppCompatActivity() {
     setupRecyclerView()
     observeViewModel()
     handleCreateFabVisibility()
-    setUpAds()
     binding.fab.setOnClickListener {
       val intent = SoundProfileManager.createIntent(this)
       soundProfileManagerLauncher.launch(intent)
@@ -139,13 +139,17 @@ class MainActivity : AppCompatActivity() {
   }
 
   private fun handleCreateFabVisibility() {
-    binding.recyclerView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
-      if (scrollY > 0) {
-        binding.fab.hide()
-      } else {
-        binding.fab.show()
+    binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+      override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        super.onScrolled(recyclerView, dx, dy)
+        if (dy > 0) {
+          binding.fab.hide()  // Scrolling down, hide FAB
+        } else if (dy < 0) {
+          binding.fab.show()  // Scrolling up, show FAB
+        }
       }
-    }
+    })
+
   }
 
   /** Sets up window insets to handle system bars. */
@@ -244,6 +248,11 @@ class MainActivity : AppCompatActivity() {
             }
           }
         })
+
+    // Load ad only when size of list of sound profiles is greater than 2.
+    if (soundProfiles.size > 2) {
+      setUpAds()
+    }
   }
 
   /**
