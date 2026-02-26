@@ -2,16 +2,20 @@ package com.a3.soundprofiles
 
 import android.Manifest
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.database.ContentObserver
+import android.graphics.drawable.ColorDrawable
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
@@ -20,15 +24,20 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar.LayoutParams
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
+import androidx.core.view.updatePadding
+import androidx.core.view.updatePaddingRelative
 import androidx.recyclerview.selection.SelectionPredicates
 import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StorageStrategy
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.a3.soundprofiles.WelcomeScreen.Companion.FIRST_LAUNCH
 import com.a3.soundprofiles.WelcomeScreen.Companion.GLOBAL_APP_PREF
 import com.a3.soundprofiles.core.data.SoundProfile
@@ -81,23 +90,7 @@ class MainActivity : AppCompatActivity() {
   private val requestPermissionLauncher =
       registerForActivityResult(ActivityResultContracts.RequestPermission()) { _ -> }
 
-  private val userSoundObserver by lazy {
-    object : ContentObserver(Handler(this.mainLooper)) {
-      override fun onChange(selfChange: Boolean) {
-        super.onChange(selfChange)
 
-        val currentVolume = CurrentUserVolumeView.getCurrentVolume(this@MainActivity)
-        binding.apply {
-          userCallVolume.setVolume(currentVolume.callVolume)
-          userMediaVolume.setVolume(currentVolume.mediaVolume)
-          userRingerVolume.setVolume(currentVolume.ringerVolume)
-          userAlarmVolume.setVolume(currentVolume.alarmVolume)
-          userNotificationVolume.setVolume(currentVolume.notificationVolume)
-        }
-
-      }
-    }
-  }
 
   /**
    * Called when the activity is first created.
@@ -134,7 +127,7 @@ class MainActivity : AppCompatActivity() {
     mainViewModel.loadAllSoundProfiles()
     setupRecyclerView()
     observeViewModel()
-    setUpAds()
+    handleCreateFabVisibility()
     binding.fab.setOnClickListener {
       val intent = SoundProfileManager.createIntent(this)
       soundProfileManagerLauncher.launch(intent)
@@ -143,57 +136,40 @@ class MainActivity : AppCompatActivity() {
       requestNotificationPermission()
     }
 
-    binding.userMediaVolume.apply {
-      setIcon(R.drawable.music_note_24)
-      addOnChangeListener(AudioManager.STREAM_MUSIC)
-    }
-    binding.userRingerVolume.apply {
-      setIcon(R.drawable.ring_volume_24)
-      addOnChangeListener(AudioManager.STREAM_RING)
-    }
-    binding.userAlarmVolume.apply {
-      setIcon(R.drawable.alarm_24)
-      addOnChangeListener(AudioManager.STREAM_ALARM)
-    }
-    binding.userNotificationVolume.apply {
-      setIcon(R.drawable.notifications_24)
-      addOnChangeListener(AudioManager.STREAM_NOTIFICATION)
-    }
-    binding.userCallVolume.apply {
-      setIcon(R.drawable.call_24)
-      addOnChangeListener(AudioManager.STREAM_VOICE_CALL)
-    }
-
-    this.contentResolver.registerContentObserver(
-      android.provider.Settings.System.CONTENT_URI, true, userSoundObserver
-    )
-
-
   }
 
+  private fun handleCreateFabVisibility() {
+    binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+      override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+        super.onScrolled(recyclerView, dx, dy)
+        if (dy > 0) {
+          binding.fab.hide()  // Scrolling down, hide FAB
+        } else if (dy < 0) {
+          binding.fab.show()  // Scrolling up, show FAB
+        }
+      }
+    })
 
-  override fun onResume() {
-    super.onResume()
-    val systemVolume = CurrentUserVolumeView.getCurrentVolume(this)
-    binding.apply {
-      userCallVolume.setVolume(systemVolume.callVolume)
-      userMediaVolume.setVolume(systemVolume.mediaVolume)
-      userRingerVolume.setVolume(systemVolume.ringerVolume)
-      userAlarmVolume.setVolume(systemVolume.alarmVolume)
-      userNotificationVolume.setVolume(systemVolume.notificationVolume)
-    }
   }
 
   /** Sets up window insets to handle system bars. */
   private fun setupWindowInsets() {
     ViewCompat.setOnApplyWindowInsetsListener(binding.appBarLayout) { v, insets ->
-      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-      v.setPadding(0, systemBars.top, 0, 0)
+      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+      v.updatePadding(left = systemBars.left, right = systemBars.right, top = systemBars.top)
       insets
     }
-    ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-      v.setPadding(0, 0, 0, systemBars.bottom)
+    ViewCompat.setOnApplyWindowInsetsListener(binding.recyclerView) { v, insets ->
+      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+      v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom)
+      insets
+    }
+    ViewCompat.setOnApplyWindowInsetsListener(binding.fab) { v, insets ->
+      val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.navigationBars())
+      v.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+        bottomMargin += systemBars.bottom
+        rightMargin += systemBars.right
+      }
       insets
     }
   }
@@ -202,7 +178,7 @@ class MainActivity : AppCompatActivity() {
   private fun setupRecyclerView() {
     val adapter =
         SoundProfileRecyclerAdapter(
-            mutableListOf(), this, soundProfileManagerLauncher, mainViewModel::toggleIsActive)
+          this, this, soundProfileManagerLauncher, mainViewModel::toggleIsActive)
     binding.recyclerView.apply {
       this.adapter = adapter
       layoutManager = LinearLayoutManager(this@MainActivity)
@@ -225,7 +201,7 @@ class MainActivity : AppCompatActivity() {
   /** Displays a loading indicator. */
   private fun showLoading() {
     binding.apply {
-      recyclerView.visibility = View.GONE
+      // recyclerView.visibility = View.GONE
       emptyProfileIndicator.visibility = View.GONE
       loadingIndicator.visibility = View.VISIBLE
     }
@@ -235,7 +211,7 @@ class MainActivity : AppCompatActivity() {
   private fun showEmptyState() {
     (binding.recyclerView.adapter as SoundProfileRecyclerAdapter).updateSoundProfiles(emptyList())
     binding.apply {
-      recyclerView.visibility = View.GONE
+      // recyclerView.visibility = View.GONE
       loadingIndicator.visibility = View.GONE
       emptyProfileIndicator.visibility = View.VISIBLE
     }
@@ -248,7 +224,7 @@ class MainActivity : AppCompatActivity() {
    */
   private fun showSuccessState(soundProfiles: List<SoundProfile>) {
     binding.apply {
-      recyclerView.visibility = View.VISIBLE
+      // recyclerView.visibility = View.VISIBLE
       loadingIndicator.visibility = View.GONE
       emptyProfileIndicator.visibility = View.GONE
     }
@@ -272,6 +248,11 @@ class MainActivity : AppCompatActivity() {
             }
           }
         })
+
+    // Load ad only when size of list of sound profiles is greater than 2.
+    if (soundProfiles.size > 2) {
+      setUpAds()
+    }
   }
 
   /**
@@ -311,10 +292,16 @@ class MainActivity : AppCompatActivity() {
         menu.findItem(R.id.action_make_default).isVisible = tracker.selection.size() == 1
         supportActionBar?.setHomeAsUpIndicator(R.drawable.close_24)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
+
+        binding.toolbar.setBackgroundColor(
+          getColorFromAttr(com.google.android.material.R.attr.colorSurfaceVariant)
+        )
+
         setOnMenuItemClickListener { handleMenuItemClick(it) }
       } else {
         title = getString(R.string.app_name)
         inflateMenu(R.menu.main_menu)
+        binding.toolbar.setBackgroundResource(0)
         setOnMenuItemClickListener { onOptionsItemSelected(it) }
       }
     }
@@ -377,6 +364,12 @@ class MainActivity : AppCompatActivity() {
   override fun onCreateOptionsMenu(menu: Menu): Boolean {
     menuInflater.inflate(R.menu.main_menu, menu)
     return true
+  }
+
+  fun Context.getColorFromAttr(attr: Int): Int {
+    val typedValue = TypedValue()
+    theme.resolveAttribute(attr, typedValue, true)
+    return typedValue.data
   }
 
   /**
@@ -509,10 +502,5 @@ class MainActivity : AppCompatActivity() {
             }
           }
         }) {}
-  }
-
-  override fun onDestroy() {
-    this.contentResolver.unregisterContentObserver(userSoundObserver)
-    super.onDestroy()
   }
 }

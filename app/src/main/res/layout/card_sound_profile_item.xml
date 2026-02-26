@@ -31,7 +31,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="8dp">
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp" >
 
 
                 <TextView
@@ -39,25 +40,32 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="?attr/colorTertiary"
+                        android:visibility="gone"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:textAppearance="?textAppearanceLabelMedium"
                         android:text="@string/default_indicator" />
 
 
                 <TextView
                     android:id="@+id/title"
+                        android:layout_marginTop="4dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
                     android:textColor="?attr/colorPrimary"
-                    android:textAppearance="@style/TextAppearance.Material3.DisplaySmall"
+                    android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                     tools:text="Sound Profile Name" />
 
 
                 <TextView
                     android:id="@+id/description"
                     android:layout_width="match_parent"
-                    android:layout_marginTop="-4dp"
+                    android:layout_marginTop="2dp"
                     android:layout_marginStart="2dp"
-                        android:visibility="gone"
+                    android:layout_marginBottom="8dp"
+                    android:visibility="gone"
+                    android:maxLines="2"
+                    android:ellipsize="end"
                     android:layout_height="wrap_content"
                     android:textColor="?attr/colorOnSurfaceVariant"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"

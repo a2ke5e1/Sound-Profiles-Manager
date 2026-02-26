@@ -13,7 +13,7 @@
     <string name="to">To</string>
     <string name="from">From</string>
     <string name="schedule">Schedule</string>
-    <string name="apply_now">Apply Now</string>
+    <string name="apply_now">Apply</string>
     <string name="create_sound_profile">Create Sound Profile</string>
     <string name="edit_sound_profile">Edit Sound Profile</string>
     <string name="cancel_schedule">Cancel Schedule</string>
@@ -22,7 +22,7 @@
     <string name="delete_all">Delete All</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
-    <string name="date_range">%1$s - %2$s</string>
+    <string name="date_range">%1$s — %2$s</string>
     <string name="about">About</string>
     <string name="share">Share</string>
     <string name="version">"Version:"</string>

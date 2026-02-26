@@ -40,7 +40,7 @@ class AboutDialog : DialogFragment() {
       val binding = DialogAboutBinding.inflate(inflater)
 
       binding.buildVersion.text =
-          ContextCompat.getString(requireContext(), R.string.version) +
+          ContextCompat.getString(it, R.string.version) +
               " ${BuildConfig.VERSION_NAME}"
       val creditsText = SpannableStringBuilder("")
       for (credit in credits) {
