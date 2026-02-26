@@ -19,7 +19,7 @@ coreSplashscreen = "1.0.1"
 playServicesAds = "24.4.0"
 firebaseCrashlytics = "19.4.4"
 firebaseCrashlyticsPlugin = "3.0.4"
-playServices = "4.4.3"
+playServices = "4.4.4"
 preferenceKtx = "1.2.1"
 
 [libraries]
