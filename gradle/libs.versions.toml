@@ -18,7 +18,7 @@ recyclerviewSelection = "1.2.0"
 coreSplashscreen = "1.2.0"
 playServicesAds = "25.0.0"
 firebaseCrashlytics = "20.0.4"
-firebaseCrashlyticsPlugin = "3.0.4"
+firebaseCrashlyticsPlugin = "3.0.6"
 playServices = "4.4.4"
 preferenceKtx = "1.2.1"
 
