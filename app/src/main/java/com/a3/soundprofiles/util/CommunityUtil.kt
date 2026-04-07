@@ -1,0 +1,42 @@
+package com.a3.soundprofiles.util
+
+import android.content.Context
+import android.content.Intent
+import androidx.core.net.toUri
+import com.a3.soundprofiles.BuildConfig
+import com.a3.soundprofiles.R
+
+object CommunityUtil {
+
+    private const val SUPPORT_GROUP_URL = "https://t.me/phycalc"
+    private const val SOURCE_CODE_URL = "https://github.com/a2ke5e1/Sound-Profiles-Manager"
+
+    fun onShare(context: Context) {
+        // Launch share if users want to share app with their friends
+        val intent = Intent(Intent.ACTION_SEND)
+        intent.type = "text/plain"
+        intent.putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name))
+        val shareMessage =
+            context.getString(
+                R.string.share_message,
+                context.getString(R.string.app_name),
+                BuildConfig.APPLICATION_ID
+            )
+                .trimIndent()
+        intent.putExtra(Intent.EXTRA_TEXT, shareMessage)
+        context.startActivity(Intent.createChooser(intent, "Share"))
+    }
+
+    fun onJoinSupportGroup(context: Context) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = SUPPORT_GROUP_URL.toUri()
+        context.startActivity(intent)
+    }
+
+    fun onViewSourceCode(context: Context) {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = SOURCE_CODE_URL.toUri()
+        context.startActivity(intent)
+    }
+
+}

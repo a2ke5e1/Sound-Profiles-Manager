@@ -1,54 +1,45 @@
 <resources>
     <string name="app_name">Sound Profiles</string>
-    <string name="save_sound_profile">Save Sound Profile</string>
-    <string name="title">Title</string>
-    <string name="description">Description</string>
-    <string name="notification_volume">Notification Volume</string>
-    <string name="media_volume">Media Volume</string>
-    <string name="ringer_volume">Ringer Volume</string>
-    <string name="call_volume">Call Volume</string>
-    <string name="alarm_volume">Alarm Volume</string>
-    <string name="create_update_sound_profile">Create/Update Sound Profile</string>
-    <string name="every_day">Every Day</string>
-    <string name="to">To</string>
-    <string name="from">From</string>
-    <string name="schedule">Schedule</string>
-    <string name="apply_now">Apply</string>
-    <string name="create_sound_profile">Create Sound Profile</string>
-    <string name="edit_sound_profile">Edit Sound Profile</string>
-    <string name="cancel_schedule">Cancel Schedule</string>
-    <string name="selected">%1$d selected</string>
-    <string name="select_all">Select All</string>
-    <string name="delete_all">Delete All</string>
-    <string name="delete">Delete</string>
-    <string name="edit">Edit</string>
-    <string name="date_range">%1$s — %2$s</string>
+    <string name="app_version">Version: %1$s</string>
+
+    <string name="sound_profiles_title">Sound Profiles</string>
+    <string name="sound_profiles_description">Schedule and automate ring, alarm, media volume, etc.</string>
+    <string name="your_schedule_header">Your Schedule</string>
+    <string name="your_profiles_header">Your Profiles</string>
+    <string name="add_profile_content_description">Add Profile</string>
+    <string name="more_options_content_description">More options</string>
+    <string name="back_button_content_description">Back</string>
+
+    <string name="create_profile_title">Create Profile</string>
+    <string name="choose_ring_mode">Choose ring mode</string>
+    <string name="ring_mode_ring">Ring</string>
+    <string name="ring_mode_vibrate">Vibrate</string>
+    <string name="ring_mode_silent">Silent</string>
+    <string name="custom_header">Custom</string>
+    <string name="volume_alarm">Alarm</string>
+    <string name="volume_media">Media</string>
+    <string name="volume_ring">Ring</string>
+    <string name="volume_notification">Notification</string>
+    <string name="volume_call">Call</string>
+
+    <string name="time_schedule_title">Time Schedule</string>
+    <string name="repeat_every_day">Repeat Every Day</string>
+    <string name="repeat_every_day_description">Profile will be repeated every day.</string>
+    <string name="select_days_description">Select specific days below.</string>
+
     <string name="about">About</string>
+    <string name="join_telegram_group">Join telegram group</string>
+    <string name="for_support_and_feedback">For support and feedback join our telegram group</string>
+    <string name="view_source_code">View Source Code</string>
+    <string name="open_source">Open Source</string>
+    <string name="open_source_desc">This app is open source under MIT license. Supported by ads and community contributions.</string>
+    <string name="translation_credits">Translation Credits</string>
     <string name="share">Share</string>
-    <string name="version">"Version:"</string>
-    <string name="special_thanks_for_translating">Special thanks for translating</string>
-    <string name="join_our_telegram_group">Join our telegram group</string>
-    <string name="no_sound_profiles">No Sound Profiles</string>
-    <string name="error_empty_title">Title cannot be empty</string>
-    <string name="dismiss">Dismiss</string>
-    <string name="i_understand">I Understand</string>
-    <string name="exact_alarm_permission_title">Schedule exact alarms</string>
-    <string name="exact_alarm_permission_message">
-        App need to use the Schedule Exact Alarms permission to automatically change sound profiles.\n\nThis is crucial for ensuring that sound profiles are changed at the specified times without delay, even if the device is in Doze mode or has battery optimizations enabled.
-        \n\nThis permission ensures the reliability and accuracy of scheduled sound profile changes.
-    </string>
-    <string name="sound_profiles">Your Profiles</string>
-    <string name="permission_rationale_title">Send Notification</string>
-    <string name="permission_rationale_message">Notification permission is required to send notifications when a sound profile is applied.</string>
-    <string name="profile_status_notifications">Profile Status Notifications</string>
-    <string name="notifications_for_profile_application">Notifications for profile application</string>
-    <string name="profile_canceled">Profile Canceled</string>
-    <string name="profile_canceled_message">\'%1$s\' profile schedule canceled</string>
-    <string name="profile_scheduled">\'%1$s\' profile scheduled</string>
-    <string name="profile_applied">Profile Applied</string>
-    <string name="profile_applied_message">Profile applied: %1$s</string>
-    <string name="by_continuing_you_agree_our_terms_of_service_and_privacy_policy">By continuing, you agree our Terms of Service and Privacy Policy.</string>
+    <string name="share_message">Check out %1$s on Google Play: (https://play.google.com/store/apps/details?id=%2$s) Create and manage sound profiles on your Android device.</string>
+    <string name="terms_and_privacy_message">By clicking on start you agree to our &lt;a href=\"%1$s\"&gt;terms of service&lt;/a&gt; and &lt;a href=\"%2$s\"&gt;privacy policy&lt;/a&gt;.</string>
     <string name="start">Start</string>
-    <string name="set_as_default">Set as Default</string>
-    <string name="default_indicator">Default</string>
+    <string name="no_schedule_guide">You haven’t added any schedules. Tap &lt;b&gt;+&lt;/b&gt;  to create your first one.</string>
+    <string name="no_profile_guide">You don’t have any profiles. Tap &lt;b&gt;+&lt;/b&gt;  to get started.</string>
+
+
 </resources>
