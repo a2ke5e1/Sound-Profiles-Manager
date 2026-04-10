@@ -48,6 +48,28 @@ class SoundProfileViewModel(
 
     fun completeWelcome() {
         viewModelScope.launch {
+            // Create default profiles
+            val ringProfile = createDefaultProfile("Ring", "volume_up").let {
+                val rMax = it.ringerVolume.max
+                val nMax = it.notificationVolume.max
+                it.copy(
+                    ringerMode = AudioManager.RINGER_MODE_NORMAL,
+                    ringerVolume = it.ringerVolume.copy(current = (rMax * 0.7).toInt()),
+                    notificationVolume = it.notificationVolume.copy(current = (nMax * 0.7).toInt())
+                )
+            }
+            repository.insertProfile(ringProfile.sanitize())
+
+            val vibrateProfile = createDefaultProfile("Vibrate", "vibrate").copy(
+                ringerMode = AudioManager.RINGER_MODE_VIBRATE
+            )
+            repository.insertProfile(vibrateProfile.sanitize())
+
+            val silentProfile = createDefaultProfile("Silent", "volume_off").copy(
+                ringerMode = AudioManager.RINGER_MODE_SILENT
+            )
+            repository.insertProfile(silentProfile.sanitize())
+
             appSettingsRepository.setFirstLaunchCompleted()
             _startupState.value = AppStartupState.Main
         }

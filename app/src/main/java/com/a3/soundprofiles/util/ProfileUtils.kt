@@ -1,4 +1,4 @@
-package com.a3.soundprofiles
+package com.a3.soundprofiles.util
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.DirectionsBike
@@ -69,6 +69,7 @@ val profileIconMap: Map<String, ImageVector> = mapOf(
     "smartphone" to Icons.Outlined.Smartphone,
     "directions_bus" to Icons.Outlined.DirectionsBus,
     "event_busy" to Icons.Outlined.EventBusy,
+    "vibrate" to Icons.Outlined.Vibration,
 )
 
 /**

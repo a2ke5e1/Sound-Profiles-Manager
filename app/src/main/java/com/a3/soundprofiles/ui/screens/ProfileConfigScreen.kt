@@ -19,7 +19,6 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.TextAutoSizeDefaults
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Alarm
@@ -76,8 +75,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.a3.soundprofiles.R
 import com.a3.soundprofiles.data.local.entities.SoundProfileEntity
-import com.a3.soundprofiles.mapNameToIcon
-import com.a3.soundprofiles.profileIconMap
+import com.a3.soundprofiles.util.mapNameToIcon
+import com.a3.soundprofiles.util.profileIconMap
 import com.a3.soundprofiles.ui.SoundProfileViewModel
 import com.a3.soundprofiles.ui.components.SoundProfilesScaffold
 import com.a3.soundprofiles.ui.components.core.Slider

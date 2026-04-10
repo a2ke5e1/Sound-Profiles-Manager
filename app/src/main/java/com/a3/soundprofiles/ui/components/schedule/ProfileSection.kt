@@ -23,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.a3.soundprofiles.data.local.entities.SoundProfileEntity
-import com.a3.soundprofiles.mapNameToIcon
+import com.a3.soundprofiles.util.mapNameToIcon
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale

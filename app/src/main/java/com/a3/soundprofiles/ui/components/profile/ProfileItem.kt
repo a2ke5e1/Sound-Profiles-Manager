@@ -21,7 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
 import com.a3.soundprofiles.R
-import com.a3.soundprofiles.mapNameToIcon
+import com.a3.soundprofiles.util.mapNameToIcon
 import com.a3.soundprofiles.ui.screens.ProfileItemState
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)

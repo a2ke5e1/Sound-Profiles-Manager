@@ -33,8 +33,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.a3.soundprofiles.mapNameToIcon
-import com.a3.soundprofiles.profileIconMap
+import com.a3.soundprofiles.util.mapNameToIcon
+import com.a3.soundprofiles.util.profileIconMap
 
 private val availableIcons = profileIconMap.keys.toList().sortedBy { it }
 

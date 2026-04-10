@@ -16,7 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.a3.soundprofiles.data.local.entities.SoundProfileEntity
-import com.a3.soundprofiles.mapNameToIcon
+import com.a3.soundprofiles.util.mapNameToIcon
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
