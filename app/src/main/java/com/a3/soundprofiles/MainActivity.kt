@@ -33,12 +33,14 @@ import com.a3.soundprofiles.ui.theme.SoundProfilesTheme
 import com.a3.soundprofiles.util.ConsentManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.app.Activity
+import android.content.Intent
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.a3.soundprofiles.ui.AppStartupState
+import com.a3.soundprofiles.ui.components.core.NotificationPolicyPermissionDialog
 
 class MainActivity : ComponentActivity() {
 
@@ -92,6 +94,18 @@ class MainActivity : ComponentActivity() {
 
                         val navController = rememberNavController()
                         val uiState by viewModel.uiState.collectAsState()
+                        val permissionRequest by viewModel.permissionRequest.collectAsState()
+
+                        if (permissionRequest != null) {
+                           NotificationPolicyPermissionDialog(
+                                onDismiss = { viewModel.permissionHandled() },
+                                onConfirm = {
+                                    val intent = Intent(permissionRequest)
+                                    context.startActivity(intent)
+                                    viewModel.permissionHandled()
+                                }
+                            )
+                        }
 
                         NavHost(
                             navController = navController,

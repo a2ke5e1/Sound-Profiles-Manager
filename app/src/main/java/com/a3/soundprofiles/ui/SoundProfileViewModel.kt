@@ -52,10 +52,16 @@ class SoundProfileViewModel(
             val ringProfile = createDefaultProfile("Ring", "volume_up").let {
                 val rMax = it.ringerVolume.max
                 val nMax = it.notificationVolume.max
+                val aMax = it.notificationVolume.max
+                val mMax = it.notificationVolume.max
+                val vMax = it.notificationVolume.max
                 it.copy(
                     ringerMode = AudioManager.RINGER_MODE_NORMAL,
                     ringerVolume = it.ringerVolume.copy(current = (rMax * 0.7).toInt()),
-                    notificationVolume = it.notificationVolume.copy(current = (nMax * 0.7).toInt())
+                    notificationVolume = it.notificationVolume.copy(current = (nMax * 0.7).toInt()),
+                    alarmVolume = it.alarmVolume.copy(current = (aMax * 0.7).toInt()),
+                    musicVolume = it.musicVolume.copy(current = (mMax * 0.7).toInt()),
+                    voiceVolume = it.voiceVolume.copy(current = (vMax * 0.7).toInt())
                 )
             }
             repository.insertProfile(ringProfile.sanitize())
@@ -65,9 +71,16 @@ class SoundProfileViewModel(
             )
             repository.insertProfile(vibrateProfile.sanitize())
 
-            val silentProfile = createDefaultProfile("Silent", "volume_off").copy(
-                ringerMode = AudioManager.RINGER_MODE_SILENT
-            )
+            val silentProfile = createDefaultProfile("Silent", "volume_off").let {
+                it.copy(
+                    ringerMode = AudioManager.RINGER_MODE_SILENT,
+                    ringerVolume = it.ringerVolume.copy(current = it.ringerVolume.min),
+                    notificationVolume = it.notificationVolume.copy(current = it.notificationVolume.min),
+                    alarmVolume = it.alarmVolume.copy(current = it.alarmVolume.min),
+                    musicVolume = it.musicVolume.copy(current = it.musicVolume.min),
+                    voiceVolume = it.voiceVolume.copy(current = it.voiceVolume.min)
+                )
+            }
             repository.insertProfile(silentProfile.sanitize())
 
             appSettingsRepository.setFirstLaunchCompleted()
@@ -206,11 +219,27 @@ class SoundProfileViewModel(
         }
     }
 
+    private val _permissionRequest = MutableStateFlow<String?>(null)
+    val permissionRequest: StateFlow<String?> = _permissionRequest
+
     fun applyProfile(profileId: Int) {
         viewModelScope.launch {
             val profile = repository.getProfileById(profileId) ?: return@launch
-            profile.applyToSystem(getApplication())
+            
+            if (profile.ringerMode != AudioManager.RINGER_MODE_NORMAL) {
+                val notificationManager = getApplication<Application>().getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+                if (!notificationManager.isNotificationPolicyAccessGranted) {
+                    _permissionRequest.value = android.provider.Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS
+                    return@launch
+                }
+            }
+            
+            profile.sanitize().applyToSystem(getApplication())
         }
+    }
+
+    fun permissionHandled() {
+        _permissionRequest.value = null
     }
 
     // Schedule operations

@@ -1,9 +1,11 @@
 package com.a3.soundprofiles.data.local.entities
 
+import android.content.Context
 import android.media.AudioManager
 import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.a3.soundprofiles.util.Log
 
 data class StreamVolume(
     val current: Int,
@@ -79,7 +81,17 @@ data class SoundProfileEntity(
 
     fun applyRingerModeRules(mode: Int): SoundProfileEntity {
         return when (mode) {
-            AudioManager.RINGER_MODE_SILENT,
+            AudioManager.RINGER_MODE_SILENT -> {
+                copy(
+                    ringerMode = mode,
+                    ringerVolume = ringerVolume.copy(current = 0),
+                    notificationVolume = notificationVolume.copy(current = 0),
+                    alarmVolume = alarmVolume.copy(current = 0),
+                    musicVolume = musicVolume.copy(current = 0),
+                    voiceVolume = voiceVolume.copy(current = 0)
+                )
+            }
+
             AudioManager.RINGER_MODE_VIBRATE -> {
                 copy(
                     ringerMode = mode,
@@ -100,13 +112,13 @@ data class SoundProfileEntity(
         return applyRingerModeRules(this.ringerMode)
     }
 
-    fun applyToSystem(context: android.content.Context) {
+    fun applyToSystem(context: Context) {
         val audioManager = context.getSystemService(android.content.Context.AUDIO_SERVICE) as AudioManager
         val notificationManager = context.getSystemService(android.content.Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
         
         if (ringerMode != AudioManager.RINGER_MODE_NORMAL) {
             if (!notificationManager.isNotificationPolicyAccessGranted) {
-                android.util.Log.w("SoundProfileEntity", "Missing Notification Policy Access, cannot change DND/ringer mode")
+                Log.w("SoundProfileEntity", "Missing Notification Policy Access, cannot change DND/ringer mode")
                 return
             }
         }
