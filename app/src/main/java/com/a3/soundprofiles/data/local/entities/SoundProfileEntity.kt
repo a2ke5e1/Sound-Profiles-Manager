@@ -113,25 +113,33 @@ data class SoundProfileEntity(
     }
 
     fun applyToSystem(context: Context) {
-        val audioManager = context.getSystemService(android.content.Context.AUDIO_SERVICE) as AudioManager
-        val notificationManager = context.getSystemService(android.content.Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
-        
-        if (ringerMode != AudioManager.RINGER_MODE_NORMAL) {
-            if (!notificationManager.isNotificationPolicyAccessGranted) {
-                Log.w("SoundProfileEntity", "Missing Notification Policy Access, cannot change DND/ringer mode")
-                return
-            }
-        }
-        
-        audioManager.ringerMode = ringerMode
+        val audioManager = context.getSystemService(Context.AUDIO_SERVICE) as AudioManager
+        val notificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        val hasPermission = notificationManager.isNotificationPolicyAccessGranted
 
-        if (ringerMode == AudioManager.RINGER_MODE_NORMAL) {
-            audioManager.setStreamVolume(AudioManager.STREAM_RING, ringerVolume.current, 0)
-            audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, notificationVolume.current, 0)
+        try {
+            // Apply ringer mode if it differs from current
+            if (ringerMode != audioManager.ringerMode) {
+                if (hasPermission) {
+                    audioManager.ringerMode = ringerMode
+                } else {
+                    Log.w("SoundProfileEntity", "Missing Notification Policy Access, cannot change ringer mode")
+                }
+            }
+
+            // Only set Ring/Notification volume if we are in NORMAL mode
+            // This avoids SecurityException when DND is active and app lacks permission
+            if (audioManager.ringerMode == AudioManager.RINGER_MODE_NORMAL) {
+                audioManager.setStreamVolume(AudioManager.STREAM_RING, ringerVolume.current, 0)
+                audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, notificationVolume.current, 0)
+            }
+
+            audioManager.setStreamVolume(AudioManager.STREAM_ALARM, alarmVolume.current, 0)
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, musicVolume.current, 0)
+            audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, voiceVolume.current, 0)
+        } catch (e: SecurityException) {
+            Log.e("SoundProfileEntity", "SecurityException: Not allowed to change Do Not Disturb state", e)
         }
-        
-        audioManager.setStreamVolume(AudioManager.STREAM_ALARM, alarmVolume.current, 0)
-        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, musicVolume.current, 0)
-        audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, voiceVolume.current, 0)
     }
 }
