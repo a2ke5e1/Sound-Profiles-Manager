@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.LoadingIndicator
 import androidx.compose.material3.Surface
@@ -137,7 +136,7 @@ class MainActivity : ComponentActivity() {
                                             onScheduleClick = { schedule ->
                                                 navController.navigate(ScheduleConfigRoute(scheduleId = schedule.id))
                                             },
-                                            onProfileClick = { profile ->
+                                            onEditProfileClick = { profile ->
                                                 navController.navigate(
                                                     ProfileConfigRoute(
                                                         name = profile.name,

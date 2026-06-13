@@ -3,6 +3,7 @@ package com.a3.soundprofiles.ui.components.profile
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreHoriz
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenuGroup
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.DropdownMenuPopup
@@ -13,6 +14,7 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MenuDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,12 +31,13 @@ import com.a3.soundprofiles.ui.screens.ProfileItemState
 fun ProfileItem(
     profile: ProfileItemState,
     onClick: () -> Unit = {},
-    onApplyClick: () -> Unit = {}
+    onEditClick: () -> Unit = {}
 ) {
     var expanded by remember { mutableStateOf(false) }
+    var showDialog by remember { mutableStateOf(false) }
 
     ListItem(
-        onClick = onClick,
+        onClick = { showDialog = true },
         verticalAlignment = Alignment.CenterVertically,
         content = {
             Text(
@@ -70,10 +73,10 @@ fun ProfileItem(
                         shapes = MenuDefaults.groupShape(0, 1)
                     ) {
                         DropdownMenuItem(
-                            text = { Text("Apply") },
+                            text = { Text(stringResource(R.string.edit)) },
                             onClick = {
                                 expanded = false
-                                onApplyClick()
+                                onEditClick()
                             }
                         )
                     }
@@ -81,4 +84,37 @@ fun ProfileItem(
             }
         },
     )
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            icon = {
+                Icon(
+                    imageVector = mapNameToIcon(profile.icon ?: ""),
+                    contentDescription = null,
+                )
+            },
+            title = {
+                Text(stringResource(R.string.apply_profile_title, profile.name))
+            },
+            text = {
+                Text(stringResource(R.string.apply_profile_message))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        showDialog = false
+                        onClick()
+                    }
+                ) {
+                    Text(stringResource(R.string.apply))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            }
+        )
+    }
 }

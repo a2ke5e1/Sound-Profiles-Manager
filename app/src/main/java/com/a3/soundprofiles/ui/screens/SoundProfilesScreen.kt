@@ -47,7 +47,7 @@ fun SoundProfilesScreen(
     onAddProfileClick: () -> Unit = {},
     onAddScheduleClick: () -> Unit = {},
     onScheduleClick: (ScheduleItemState) -> Unit = {},
-    onProfileClick: (ProfileItemState) -> Unit = {},
+    onEditProfileClick: (ProfileItemState) -> Unit = {},
     onApplyProfileClick: (ProfileItemState) -> Unit = {}
 ) {
     val scrollBehavior = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
@@ -131,8 +131,8 @@ fun SoundProfilesScreen(
             items(profiles) { profile ->
                 ProfileItem(
                     profile = profile,
-                    onClick = { onProfileClick(profile) },
-                    onApplyClick = { onApplyProfileClick(profile) }
+                    onEditClick = { onEditProfileClick(profile) },
+                    onClick = { onApplyProfileClick(profile) }
                 )
             }
 

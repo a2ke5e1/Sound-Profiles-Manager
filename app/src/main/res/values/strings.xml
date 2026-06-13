@@ -40,6 +40,11 @@
     <string name="start">Start</string>
     <string name="no_schedule_guide">You haven’t added any schedules. Tap &lt;b&gt;+&lt;/b&gt;  to create your first one.</string>
     <string name="no_profile_guide">You don’t have any profiles. Tap &lt;b&gt;+&lt;/b&gt;  to get started.</string>
+    <string name="edit">Edit</string>
+    <string name="apply">Apply</string>
+    <string name="cancel">Cancel</string>
+    <string name="apply_profile_title">Apply %1$s?</string>
+    <string name="apply_profile_message">Are you sure you want to apply this profile?</string>
 
 
 </resources>
