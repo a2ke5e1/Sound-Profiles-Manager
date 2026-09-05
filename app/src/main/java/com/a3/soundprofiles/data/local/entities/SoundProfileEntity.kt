@@ -13,7 +13,7 @@ data class StreamVolume(
     val max: Int
 ) {
     val percent: Int
-        get() = if (max > min) ((current - min) * 100 / (max - min)) else 0
+        get() = if (max > min) ((current.coerceIn(min, max) - min) * 100 / (max - min)) else 0
 }
 
 @Entity(tableName = "sound_profiles")
@@ -88,7 +88,7 @@ data class SoundProfileEntity(
                     notificationVolume = notificationVolume.copy(current = 0),
                     alarmVolume = alarmVolume.copy(current = 0),
                     musicVolume = musicVolume.copy(current = 0),
-                    voiceVolume = voiceVolume.copy(current = 0)
+                    voiceVolume = voiceVolume.copy(current = voiceVolume.min)
                 )
             }
 
