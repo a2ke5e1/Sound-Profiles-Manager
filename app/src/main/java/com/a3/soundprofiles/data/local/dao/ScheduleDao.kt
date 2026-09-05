@@ -20,4 +20,7 @@ interface ScheduleDao {
 
     @Delete
     suspend fun deleteSchedule(schedule: ScheduleEntity)
+
+    @Query("SELECT * FROM profile_schedules WHERE isEnabled = 1")
+    suspend fun getEnabledSchedules(): List<ScheduleEntity>
 }

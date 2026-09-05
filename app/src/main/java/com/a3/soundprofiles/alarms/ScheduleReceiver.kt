@@ -11,6 +11,7 @@ import com.a3.soundprofiles.data.repository.ScheduleRepository
 import com.a3.soundprofiles.data.repository.SoundProfileRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
@@ -19,7 +20,6 @@ class ScheduleReceiver : BroadcastReceiver(), KoinComponent {
 
     private val scheduleRepository: ScheduleRepository by inject()
     private val soundProfileRepository: SoundProfileRepository by inject()
-    private val scope = CoroutineScope(Dispatchers.IO)
 
     override fun onReceive(context: Context, intent: Intent) {
         val scheduleId = intent.getIntExtra(ScheduleAlarmManager.EXTRA_SCHEDULE_ID, -1)
@@ -29,7 +29,7 @@ class ScheduleReceiver : BroadcastReceiver(), KoinComponent {
 
         val pendingResult = goAsync()
 
-        scope.launch {
+        CoroutineScope(Dispatchers.IO + SupervisorJob()).launch {
             try {
                 val schedule = scheduleRepository.getScheduleById(scheduleId) ?: return@launch
                 

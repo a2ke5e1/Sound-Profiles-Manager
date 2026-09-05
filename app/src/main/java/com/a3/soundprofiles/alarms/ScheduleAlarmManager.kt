@@ -23,6 +23,9 @@ class ScheduleAlarmManager(private val context: Context) {
         }
     }
 
+    private fun getRequestCode(scheduleId: Int, isStart: Boolean): Int =
+        if (isStart) scheduleId * 2 else scheduleId * 2 + 1
+
     fun scheduleAlarm(scheduleId: Int, timeInMillis: Long, isStart: Boolean) {
         if (!canScheduleExactAlarms()) return
 
@@ -31,11 +34,9 @@ class ScheduleAlarmManager(private val context: Context) {
             putExtra(EXTRA_IS_START, isStart)
         }
 
-        // We use a unique request code for start vs end alarms
-        val requestCode = if (isStart) scheduleId else -scheduleId
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            requestCode,
+            getRequestCode(scheduleId, isStart),
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -52,11 +53,11 @@ class ScheduleAlarmManager(private val context: Context) {
         val endIntent = Intent(context, ScheduleReceiver::class.java)
 
         val startPending = PendingIntent.getBroadcast(
-            context, scheduleId, startIntent,
+            context, getRequestCode(scheduleId, isStart = true), startIntent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
         val endPending = PendingIntent.getBroadcast(
-            context, -scheduleId, endIntent,
+            context, getRequestCode(scheduleId, isStart = false), endIntent,
             PendingIntent.FLAG_NO_CREATE or PendingIntent.FLAG_IMMUTABLE
         )
 

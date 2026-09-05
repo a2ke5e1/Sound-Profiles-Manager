@@ -14,4 +14,6 @@ class ScheduleRepository(private val scheduleDao: ScheduleDao) {
     suspend fun updateSchedule(schedule: ScheduleEntity) = scheduleDao.updateSchedule(schedule)
 
     suspend fun deleteSchedule(schedule: ScheduleEntity) = scheduleDao.deleteSchedule(schedule)
+
+    suspend fun getEnabledSchedules(): List<ScheduleEntity> = scheduleDao.getEnabledSchedules()
 }
