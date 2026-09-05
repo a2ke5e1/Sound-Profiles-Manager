@@ -27,7 +27,7 @@ fun getEnvProperty(key: String, required: Boolean = false): String {
 android {
     namespace = "com.a3.soundprofiles"
     compileSdk {
-        version = release(36) {
+        version = release(37) {
             minorApiLevel = 1
         }
     }
@@ -35,7 +35,7 @@ android {
     defaultConfig {
         applicationId = "com.a3.soundprofiles"
         minSdk = 29
-        targetSdk = 36
+        targetSdk = 37
         versionCode = 20
         versionName = "0.1.4"
 

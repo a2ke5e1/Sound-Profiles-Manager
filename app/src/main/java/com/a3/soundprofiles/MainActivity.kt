@@ -33,6 +33,10 @@ import com.a3.soundprofiles.util.ConsentManager
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import android.app.Activity
 import android.content.Intent
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,6 +79,7 @@ class MainActivity : ComponentActivity() {
                     }
                     AppStartupState.Main -> {
                         val context = LocalContext.current
+                        val motionScheme = MaterialTheme.motionScheme
                         var isConsentShown by remember { mutableStateOf(false) }
 
                         LaunchedEffect(Unit) {
@@ -109,6 +114,45 @@ class MainActivity : ComponentActivity() {
                         NavHost(
                             navController = navController,
                             startDestination = SoundProfilesRoute,
+                            enterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                    animationSpec = spring(
+                                        dampingRatio = 1.0f,
+                                        stiffness = Spring.StiffnessMediumLow,
+                                    ),
+                                )
+                            },
+
+                            exitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Left,
+                                    animationSpec = spring(
+                                        dampingRatio = 1.0f,
+                                        stiffness = Spring.StiffnessMediumLow,
+                                    ),
+                                )
+                            },
+
+                            popEnterTransition = {
+                                slideIntoContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    animationSpec = spring(
+                                        dampingRatio = 1.0f,
+                                        stiffness = Spring.StiffnessMediumLow,
+                                    ),
+                                )
+                            },
+
+                            popExitTransition = {
+                                slideOutOfContainer(
+                                    towards = AnimatedContentTransitionScope.SlideDirection.Right,
+                                    animationSpec = spring(
+                                        dampingRatio = 1.0f,
+                                        stiffness = Spring.StiffnessMediumLow,
+                                    ),
+                                )
+                            },
                         ) {
                             composable<SoundProfilesRoute> {
                                 when (val state = uiState) {
