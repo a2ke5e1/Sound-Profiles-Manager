@@ -36,8 +36,8 @@ android {
         applicationId = "com.a3.soundprofiles"
         minSdk = 29
         targetSdk = 37
-        versionCode = 21
-        versionName = "0.1.5"
+        versionCode = 22
+        versionName = "0.1.6"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -1,10 +1,12 @@
 package com.a3.soundprofiles.alarms
 
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
+import android.provider.Settings
 import android.util.Log
 import com.a3.soundprofiles.data.local.entities.SoundProfileEntity
 import com.a3.soundprofiles.data.repository.ScheduleRepository
@@ -45,11 +47,40 @@ class ScheduleReceiver : BroadcastReceiver(), KoinComponent {
                 if (profileId != null) {
                     val profile = soundProfileRepository.getProfileById(profileId)
                     if (profile != null) {
-                        profile.applyToSystem(context)
-                        
-                        val title = if (isStart) "Started: ${schedule.name}" else "Ended: ${schedule.name}"
-                        val message = "Applied profile: ${profile.name}"
-                        notificationHelper.showProfileSwitchNotification(title, message)
+                        // Check if the profile needs DND permission for ringer mode changes
+                        val needsDndPermission = profile.ringerMode != AudioManager.RINGER_MODE_NORMAL
+                        val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                        val hasDndPermission = notificationManager.isNotificationPolicyAccessGranted
+
+                        if (needsDndPermission && !hasDndPermission) {
+                            // Still apply what we can (volumes), but warn the user about ringer mode
+                            profile.applyToSystem(context)
+
+                            val settingsIntent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS).apply {
+                                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                            }
+                            val pendingSettingsIntent = PendingIntent.getActivity(
+                                context, 0, settingsIntent,
+                                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                            )
+
+                            val ringerModeName = when (profile.ringerMode) {
+                                AudioManager.RINGER_MODE_SILENT -> "Silent"
+                                AudioManager.RINGER_MODE_VIBRATE -> "Vibrate"
+                                else -> "Custom"
+                            }
+                            notificationHelper.showProfileSwitchNotification(
+                                title = "⚠️ Permission needed for ${profile.name}",
+                                message = "Volumes applied, but $ringerModeName mode requires Do Not Disturb access. Tap to grant.",
+                                actionIntent = pendingSettingsIntent
+                            )
+                        } else {
+                            profile.applyToSystem(context)
+
+                            val title = if (isStart) "Started: ${schedule.name}" else "Ended: ${schedule.name}"
+                            val message = "Applied profile: ${profile.name}"
+                            notificationHelper.showProfileSwitchNotification(title, message)
+                        }
                     } else {
                         Log.e("ScheduleReceiver", "Profile not found for ID: $profileId")
                     }

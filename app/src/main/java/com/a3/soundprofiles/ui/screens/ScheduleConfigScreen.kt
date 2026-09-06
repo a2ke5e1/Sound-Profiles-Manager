@@ -28,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import android.Manifest
 import android.app.AlarmManager
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -35,6 +36,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import android.media.AudioManager
 import androidx.core.content.ContextCompat
 import com.a3.soundprofiles.data.local.entities.ScheduleEntity
 import com.a3.soundprofiles.ui.SoundProfileViewModel
@@ -43,6 +45,7 @@ import com.a3.soundprofiles.ui.components.schedule.ProfilePickerDialog
 import com.a3.soundprofiles.ui.components.schedule.TimeScheduleBottomSheet
 import com.a3.soundprofiles.ui.components.schedule.ScheduleDetailsEditor
 import com.a3.soundprofiles.ui.components.schedule.ScheduleIdentityEditor
+import com.a3.soundprofiles.ui.components.core.NotificationPolicyPermissionDialog
 import org.koin.androidx.compose.koinViewModel
 import java.util.Calendar
 
@@ -94,6 +97,7 @@ fun ScheduleConfigScreen(
     val coroutineScope = rememberCoroutineScope()
 
     var showAlarmPermissionDialog by remember { mutableStateOf(false) }
+    var showDndPermissionDialog by remember { mutableStateOf(false) }
 
     fun checkAndSaveSchedule() {
         if (!schedule.startTime.before(schedule.endTime)) {
@@ -110,6 +114,21 @@ fun ScheduleConfigScreen(
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             if (!alarmManager.canScheduleExactAlarms()) {
                 showAlarmPermissionDialog = true
+                return
+            }
+        }
+
+        // Check DND permission if any associated profile uses Silent/Vibrate
+        val startProfile = profiles.find { it.id == schedule.profileId }
+        val endProfile = schedule.fallbackProfileId?.let { id -> profiles.find { it.id == id } }
+        val needsDndAccess = listOfNotNull(startProfile, endProfile).any {
+            it.ringerMode != AudioManager.RINGER_MODE_NORMAL
+        }
+        if (needsDndAccess) {
+            val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE)
+                as NotificationManager
+            if (!notificationManager.isNotificationPolicyAccessGranted) {
+                showDndPermissionDialog = true
                 return
             }
         }
@@ -154,6 +173,17 @@ fun ScheduleConfigScreen(
                 TextButton(onClick = { showAlarmPermissionDialog = false }) {
                     Text("Cancel")
                 }
+            }
+        )
+    }
+
+    if (showDndPermissionDialog) {
+        NotificationPolicyPermissionDialog(
+            onDismiss = { showDndPermissionDialog = false },
+            onConfirm = {
+                showDndPermissionDialog = false
+                val intent = Intent(Settings.ACTION_NOTIFICATION_POLICY_ACCESS_SETTINGS)
+                context.startActivity(intent)
             }
         )
     }

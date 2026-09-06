@@ -3,6 +3,7 @@ package com.a3.soundprofiles.alarms
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
@@ -34,7 +35,11 @@ class NotificationHelper(private val context: Context) {
         notificationManager.createNotificationChannel(channel)
     }
 
-    fun showProfileSwitchNotification(title: String, message: String) {
+    fun showProfileSwitchNotification(
+        title: String,
+        message: String,
+        actionIntent: PendingIntent? = null
+    ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
         ) {
@@ -47,6 +52,10 @@ class NotificationHelper(private val context: Context) {
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
+
+        if (actionIntent != null) {
+            builder.setContentIntent(actionIntent)
+        }
 
         with(NotificationManagerCompat.from(context)) {
             notify(notificationIdCounter++, builder.build())
