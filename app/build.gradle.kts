@@ -36,8 +36,8 @@ android {
         applicationId = "com.a3.soundprofiles"
         minSdk = 29
         targetSdk = 37
-        versionCode = 22
-        versionName = "0.1.6"
+        versionCode = 23
+        versionName = "0.1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -63,6 +63,9 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("release")
+            optimization {
+                enable = true
+            }
 
             resValue("string", "admob_app_id", getEnvProperty("ADMOB_APPLICATION_ID", required = true))
             resValue("string", "admob_native_ad_unit_id", getEnvProperty("ADMOB_NATIVE_AD_UNIT", required = true))
