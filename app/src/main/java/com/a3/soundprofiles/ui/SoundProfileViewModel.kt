@@ -6,6 +6,7 @@ import android.icu.util.Calendar
 import android.media.AudioManager
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.a3.soundprofiles.alarms.NotificationHelper
 import com.a3.soundprofiles.data.local.entities.ScheduleEntity
 import com.a3.soundprofiles.data.local.entities.SoundProfileEntity
 import com.a3.soundprofiles.data.local.entities.StreamVolume
@@ -32,6 +33,7 @@ class SoundProfileViewModel(
     private val appSettingsRepository: AppSettingsRepository
 ) : AndroidViewModel(application) {
 
+    private val notificationHelper = NotificationHelper(application)
     private val audioManager = application.getSystemService(Context.AUDIO_SERVICE) as AudioManager
     private val _startupState = MutableStateFlow(AppStartupState.Loading)
     val startupState: StateFlow<AppStartupState> = _startupState
@@ -235,6 +237,15 @@ class SoundProfileViewModel(
             }
             
             profile.sanitize().applyToSystem(getApplication())
+
+            val title = "Applied Profile"
+            val message = "Profile ${profile.name} has been applied"
+            notificationHelper.showProfileSwitchNotification(
+                title=title,
+                message=message,
+                notificationId = PROFILE_APPLIED_NOTIFICATION_ID
+            )
+
         }
     }
 
@@ -312,5 +323,9 @@ class SoundProfileViewModel(
         } else {
             alarmManager.cancelAlarm(schedule.scheduleId)
         }
+    }
+
+    companion object {
+        private const val PROFILE_APPLIED_NOTIFICATION_ID: Int = 100
     }
 }

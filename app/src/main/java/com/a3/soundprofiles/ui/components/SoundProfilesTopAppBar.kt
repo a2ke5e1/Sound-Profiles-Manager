@@ -52,7 +52,10 @@ fun SoundProfilesTopAppBar(
                 val collapsedFraction = scrollBehavior.state.collapsedFraction
                 // Hide when mostly collapsed (tweak threshold as needed)
                 if (collapsedFraction < 0.3f) {
-                    Text(text = subtitle)
+                    Text(
+                        text = subtitle,
+                        style = MaterialTheme.typography.bodySmallEmphasized,
+                    )
                 }
             }
         },

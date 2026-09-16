@@ -96,7 +96,7 @@ fun SoundProfilesScreen(
                 if (schedules.isEmpty()) {
                     Text(
                         text = AnnotatedString.fromHtml(stringResource(R.string.no_schedule_guide)),
-                        style = MaterialTheme.typography.bodySmall,
+                        style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(top = 0.dp, bottom = 8.dp)
                     )
@@ -138,6 +138,7 @@ fun SoundProfilesScreen(
 
             if (profiles.size > 1) {
                 item {
+                    Spacer(modifier = Modifier.height(20.dp))
                     AdCard()
                 }
             }

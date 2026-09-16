@@ -38,7 +38,8 @@ class NotificationHelper(private val context: Context) {
     fun showProfileSwitchNotification(
         title: String,
         message: String,
-        actionIntent: PendingIntent? = null
+        actionIntent: PendingIntent? = null,
+        notificationId: Int? = null
     ) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
             ActivityCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
@@ -47,7 +48,7 @@ class NotificationHelper(private val context: Context) {
         }
 
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.mipmap.ic_launcher) // Fallback icon
+            .setSmallIcon(R.drawable.notification_icon) // Fallback icon
             .setContentTitle(title)
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -58,7 +59,7 @@ class NotificationHelper(private val context: Context) {
         }
 
         with(NotificationManagerCompat.from(context)) {
-            notify(notificationIdCounter++, builder.build())
+            notify( notificationId ?: notificationIdCounter++, builder.build())
         }
     }
 }
