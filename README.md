@@ -2,4 +2,4 @@
 Schedule and automate ring, alarm, media volume, etc.
 
 
-![](/Screenshots/cover.png)
+![](/Screenshots/cover.webp)
